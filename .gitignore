@@ -1,0 +1,8 @@
+*.pyc
+*.fasta
+*.fasta.fai
+*.gtf
+*.bai
+*.bam
+*.bed 
+*.xlsx

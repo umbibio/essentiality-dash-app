@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  dash:
+    image: python:3.11
+    # restart: unless-stopped
+    ports:
+      - 8050:8050
+    volumes:
+      - ./dash-app:/app
+      - ./docker_entrypoint_dash.sh:/docker_entrypoint_dash.sh
+      - ./run_dash_app.sh:/run_dash_app.sh
+    working_dir: /app
+    entrypoint: ["/docker_entrypoint_dash.sh"]
+    command: ["/run_dash_app.sh"]
