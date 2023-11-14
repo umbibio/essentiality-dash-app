@@ -1,11 +1,13 @@
 from dash import Dash, html,dash_table,dcc, callback
 from pages.components.data_loader import load_data
 
-# path = r'D:\Demo_App\assets\OIS_sorted.xlsx'
-# data = load_data(path)
+path = r'assets\MIS_OIS_BM.xlsx'
+data = load_data(path)
+
 def table():
   return dash_table.DataTable(
                                id ='table',
+                               data=data.to_dict('records'), 
                                 page_size=10,
                                 style_table={
                                 'border': '1px solid black',  
@@ -20,4 +22,6 @@ def table():
                                 'border': '1px solid black',
                                 'padding': '5px', 
                                  'color': 'black', 
-                               'margin': 'auto' },)
+                               'margin': 'auto' },
+                               row_selectable='single',
+                               )

@@ -1,11 +1,16 @@
 from dash import Dash, html, dcc, Input, Output, callback
 import dash_bio as dashbio
 from app import app
+from pages.components.data_loader import load_data,genome_data,genome
 
+path_bed = r'assets\Pk_5502transcript.bed'
+gene_to_genome = genome_data(path_bed)
+genome_list=genome(gene_to_genome)
+path_bed = r'assets/Pk_5502transcript.bed'
 def return_igv():
     return dashbio.Igv(
         id='igv-container',
-        locus = 'PKNH_14_v2:209-2791',
+        genome= genome_list,
         reference={
             'id': "Id",
             'name': "PKHN",
