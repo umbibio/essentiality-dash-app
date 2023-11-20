@@ -9,19 +9,19 @@ def table():
                                id ='table',
                                data=data.to_dict('records'), 
                                 page_size=10,
-                                style_table={
-                                'border': '1px solid black',  
-                               'borderCollapse': 'collapse', 
-                               'borderTop': 'none', 
-                               'borderBottom': 'none', 
-                                'color': 'black' ,
+                               style_table={
+                                'border': 'none',
+                                'borderCollapse': 'collapse',
                                'margin': 'auto'
-                                },
-                                style_header={'fontWeight': 'bold'},
-                                style_cell={'textAlign': 'left', 'fontSize': '16px',
-                                'border': '1px solid black',
-                                'padding': '5px', 
-                                 'color': 'black', 
-                               'margin': 'auto' },
+                               },
+                                style_header={'fontWeight': 'bold','border': 'none'},
+                               style_cell={
+                                'textAlign': 'left',
+                                'fontSize': '16px',
+                                'border': 'none',
+                                'padding': '5px',
+                                'margin': 'auto',
+                               'lineHeight': '1.5'  
+                               },
                                row_selectable='single',
-                               )
+)

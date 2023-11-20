@@ -1,4 +1,4 @@
-from dash import Dash, dcc
+from dash import Dash, dcc,html
 import pandas as pd
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output,State,MATCH
@@ -32,14 +32,14 @@ for page in page_info_list:
 nav = dbc.Nav([
     dbc.NavItem(dbc.NavLink(page['title'], href=page['href'], id={'type': 'navlink', 'page': page['module']}))
     for page in page_info_list ], pills=True)
-# logo = html.Img(src=app.get_asset_url('random_wordmark_logo_design_4x.png'), className="img-fluid")
+logo = html.Img(src=app.get_asset_url('logo_sida.png'), className="img-fluid")
 app.layout = dbc.Container(
     dbc.Row([
         dcc.Location(id='url', refresh=False),
         # html.Datalist(id='list-suggested-gene-ids', children=[html.Option(value=word) for word in descriptions.ID]),
         # dcc.Store(id='expression-color-scale-store', storage_type='local'),
         dbc.Col([
-            #  dbc.Row(dbc.Col(logo, width=10)),
+          dbc.Row(dbc.Col(logo, width=10)),
             dbc.Row(dbc.Col(id='left-menu')),
         ], width=2),
         dbc.Col([
