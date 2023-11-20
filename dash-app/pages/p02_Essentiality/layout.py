@@ -27,22 +27,26 @@ def make_filter_popover(name, input_component, delay, **kwargs):
     ])
 
 filter_inputs = {
-    'geneID': dbc.Input(id='network-nodes-table-filter-geneID', placeholder='Filter ...', size='sm'),
-    'MIS1': make_filter_popover('MIS1', dcc.RangeSlider, 10000, pushable=True, step=0.01),
-    'MIS2': make_filter_popover('MIS2', dcc.RangeSlider, 10000, pushable=True, step=0.01),
-    'MIS3': make_filter_popover('MIS3', dcc.RangeSlider, 10000, pushable=True, step=0.01),
+    'GeneID.PkH': dbc.Input(id='network-nodes-table-filter-GeneIDPkH', placeholder='Filter ...', size='sm'),
+    'Product.Description': dbc.Input(id='network-nodes-table-filter-ProductDescription', placeholder='Filter ...', size='sm'),
+    'No.of_TTAA': make_filter_popover('No.of_TTAA', dcc.RangeSlider, 10000, pushable=True, step=0.01),
+    'MIS': make_filter_popover('MIS', dcc.RangeSlider, 10000, pushable=True, step=0.01),
     'OIS': make_filter_popover('OIS', dcc.RangeSlider, 10000, pushable=True, step=0.01),
-    'BM': dbc.Input(id='network-nodes-table-filter-BM', placeholder='Filter ...', size='sm'),
+    'HMS': dbc.Input(id='network-nodes-table-filter-HMS', placeholder='Filter ...', size='sm'),
+    'GeneID.Pf_3D7': dbc.Input(id='network-nodes-table-filter-GeneIDPf_3D7', placeholder='Filter ...', size='sm'),
+    'GeneID.Pb_ANKA': dbc.Input(id='network-nodes-table-filter-GeneIDPb_ANKA', placeholder='Filter ...', size='sm'),
 }
 
 
 table_columns = [
-    {"id": "geneID", "name": "gene ID", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "MIS1", "name": "MIS1", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "MIS2", "name": "MIS2", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "MIS3", "name": "MIS3", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "BM", "name": "BM", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneID.PkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "Product.Description", "name": "Product.Description", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "No.of_TTAA", "name": "No.of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "HMS", "name": "BM", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneID.Pf_3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneID.Pb_ANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
 ]
 
 menu = []

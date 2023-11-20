@@ -15,7 +15,7 @@ grey_color = 'lightgrey'
 path_mis = 'assets/MIS_sorted.xlsx'
 path_ois = 'assets/OIS_sorted.xlsx'
 path_bm = 'assets/BM_sorted.xlsx'
-path= 'assets/MIS_OIS_BM.xlsx'
+path= 'assets/MIS_OIS_HMS_Pk_Pf_Pb_table_V2.xlsx'
 
 path_bed = r'assets\Pk_5502transcript.bed'
 gene_to_genome = genome_data(path_bed)
@@ -54,17 +54,19 @@ tracks =[
 
 
 table_columns = [
-    {"id": "geneID", "name": "gene ID", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "MIS1", "name": "MIS1", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "MIS2", "name": "MIS2", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "MIS3", "name": "MIS3", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneID.PkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "Product.Description", "name": "Product.Description", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '40%', 'minWidth': '140px'}},
+    {"id": "No.of_TTAA", "name": "No.of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
     {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "BM", "name": "BM", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "HMS", "name": "BM", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneID.Pf_3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneID.Pb_ANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
 ]
 @app.callback(
     Output('selected-network-nodes', 'data'),
     Input({'type': 'net-node-table-tr', 'index': ALL}, 'n_clicks'),
-    State('selected-network-nodes', 'data'),
+    Input('selected-network-nodes', 'data'),
 )
 def update_selected_rows(row_n_clicks, data):
     index = None  # Initialize index
@@ -88,40 +90,40 @@ def update_selected_rows(row_n_clicks, data):
 @app.callback(
     Output('network-nodes-table', 'children'),
     Output('network-nodes-table-pagination', 'max_value'),
-    Output('network-nodes-table-filter-MIS3-form-message', 'children'),
+    Output('network-nodes-table-filter-MIS-form-message', 'children'),
     Output('network-nodes-table-filter-OIS-form-message', 'children'),
     Input('network-nodes-table-pagination', 'active_page'),
     Input('network-nodes-table-page-size-radio', 'value'),
-    Input('network-nodes-table-filter-geneID', 'value'),
-    Input('network-nodes-table-filter-MIS3', 'value'),
+    Input('network-nodes-table-filter-GeneIDPkH', 'value'),
+    Input('network-nodes-table-filter-MIS', 'value'),
     Input('network-nodes-table-filter-OIS', 'value'),
-    Input('network-nodes-table-filter-BM', 'value'),
+    Input('network-nodes-table-filter-HMS', 'value'),
     State('network-nodes-table-sort-column-values-state', 'data'),
     State('selected-network-nodes', 'data'),
 )
 def update_info_tables(page, page_size, geneid_filter, mis_filter, ois_filter, bm_filter, sort_state, selected_nodes):
-
     page = int(page) - 1
 
-    df = pd.DataFrame(data)
-    
+    # Assuming 'data' is your provided data
+    df = data
+
     if geneid_filter:
-        df = df.loc[df['geneID'].str.lower().str.contains(geneid_filter.lower())]
+        df = df.loc[df['GeneID.PkH'].str.lower().str.contains(geneid_filter.lower())]
     if mis_filter:
-        df = df.loc[(df['MIS3'] >= mis_filter[0]) & (df['MIS3'] <= mis_filter[1])]
+        df = df.loc[(df['MIS'] >= mis_filter[0]) & (df['MIS'] <= mis_filter[1])]
     if ois_filter:
         df = df.loc[(df['OIS'] >= ois_filter[0]) & (df['OIS'] <= ois_filter[1])]
     if bm_filter:
-        df = df.loc[df['BM'].str.lower().str.contains(bm_filter.lower())]
-    
+        df = df.loc[df['HMS'].str.lower().str.contains(bm_filter.lower())]
+
     by = [c['id'] for i, c in enumerate(table_columns) if sort_state[i] > 0]
-    ascending = [not bool(s-1) for s in sort_state if s > 0]
+    ascending = [not bool(s - 1) for s in sort_state if s > 0]
     df = df.sort_values(by, ascending=ascending)
 
-    data_slice = [{'index': i} for i in range(page * page_size, (page + 1) * page_size)]
+    data_slice = [{'index': i, 'GeneID.PkH': '', 'Product.Description': ''} for i in range(page * page_size, (page + 1) * page_size)]
     for i, item in enumerate(df.iloc[page * page_size:(page + 1) * page_size].to_dict('records')):
-        item_with_index = {'index': i, **item}  # Ensure 'index' key is present
-        data_slice[i] = item_with_index
+        item_with_index = {'index': i, **item} 
+        data_slice[i].update(item_with_index)
 
     net_body = [
         html.Tbody([
@@ -129,17 +131,20 @@ def update_info_tables(page, page_size, geneid_filter, mis_filter, ois_filter, b
                 html.Td(item_with_index.get(c['id'], '-'), style=c['style'])
                 for c in table_columns],
                 id={'type': 'net-node-table-tr', 'index': item_with_index['index']},
-                style={"fontWeight": 'bold'} if item_with_index['index'] in selected_nodes else {"fontWeight": 'normal'},
-                className='table-active' if item_with_index['index'] in selected_nodes else '',)
+                style={"fontWeight": 'bold'} if item_with_index['index'] in selected_nodes else {
+                    "fontWeight": 'normal'},
+                className='table-active' if item_with_index['index'] in selected_nodes else '', )
             for item_with_index in data_slice
         ])
     ]
 
     filtered_data_nrows = len(df)
-    degree_form_message = f'Showing values between {mis_filter}'
-    zscore_form_message = f'Showing values between {ois_filter}'
+    degree_form_message = f'Showing values between {mis_filter}' if mis_filter else ''
+    zscore_form_message = f'Showing values between {ois_filter}' if ois_filter else ''
 
     return net_body, int(np.ceil(filtered_data_nrows / page_size)), degree_form_message, zscore_form_message
+
+
 
 @app.callback(
     Output({'type': 'net-node-table-tr', 'index': MATCH}, 'style'),
@@ -327,7 +332,7 @@ def update_graph2(selected_rows,table_data):
     else:
      selected_row = table_data[selected_rows[0]]
      selected_gene = selected_row['geneID']
-     fig2 = create_plot(df_MIS, selected_gene, 'MIS3', 'MIS Score for Genes')
+     fig2 = create_plot(df_MIS, selected_gene, 'MIS', 'MIS Score for Genes')
     return  fig2
 
 
@@ -339,7 +344,7 @@ def update_graph2(selected_rows,table_data):
 
 def update_graph2(selected_rows,table_data):
     if not selected_rows:
-     fig3 = orig_graph(df_BM, 'BM', 'BM Score for Genes')
+     fig3 = orig_graph(df_BM, 'BM', 'HM Score for Genes')
     else:
      selected_row = table_data[selected_rows[0]]
      selected_gene = selected_row['geneID']
