@@ -90,31 +90,35 @@ def update_selected_rows(row_n_clicks, data):
 @app.callback(
     Output('network-nodes-table', 'children'),
     Output('network-nodes-table-pagination', 'max_value'),
-    Output('network-nodes-table-filter-MIS-form-message', 'children'),
-    Output('network-nodes-table-filter-OIS-form-message', 'children'),
     Input('network-nodes-table-pagination', 'active_page'),
     Input('network-nodes-table-page-size-radio', 'value'),
     Input('network-nodes-table-filter-GeneIDPkH', 'value'),
-    Input('network-nodes-table-filter-MIS', 'value'),
-    Input('network-nodes-table-filter-OIS', 'value'),
-    Input('network-nodes-table-filter-HMS', 'value'),
+    Input('network-nodes-table-filter-GeneIDPf_3D7', 'value'),
+    Input('network-nodes-table-filter-GeneIDPb_ANKA', 'value'),
+    Input('MIS-slider', 'value'),
+    Input('OIS-slider', 'value'),
+    Input('HMS-slider', 'value'),
     State('network-nodes-table-sort-column-values-state', 'data'),
     State('selected-network-nodes', 'data'),
 )
-def update_info_tables(page, page_size, geneid_filter, mis_filter, ois_filter, bm_filter, sort_state, selected_nodes):
+def update_info_tables(page, page_size, geneid_filter1,geneid_filter2,geneid_filter3, mis_filter, ois_filter, bm_filter, sort_state, selected_nodes):
     page = int(page) - 1
 
     # Assuming 'data' is your provided data
     df = data
 
-    if geneid_filter:
-        df = df.loc[df['GeneID.PkH'].str.lower().str.contains(geneid_filter.lower())]
+    if geneid_filter1:
+        df = df.loc[df['GeneID.PkH'].str.lower().str.contains(geneid_filter1.lower())]
     if mis_filter:
         df = df.loc[(df['MIS'] >= mis_filter[0]) & (df['MIS'] <= mis_filter[1])]
     if ois_filter:
         df = df.loc[(df['OIS'] >= ois_filter[0]) & (df['OIS'] <= ois_filter[1])]
     if bm_filter:
-        df = df.loc[df['HMS'].str.lower().str.contains(bm_filter.lower())]
+       df = df.loc[(df['HMS'] >= ois_filter[0]) & (df['HMS'] <= ois_filter[1])]
+    if geneid_filter2:
+        df = df.loc[df['GeneID.PkH'].str.lower().str.contains(geneid_filter2.lower())]
+    if geneid_filter3:
+        df = df.loc[df['GeneID.PkH'].str.lower().str.contains(geneid_filter3.lower())]
 
     by = [c['id'] for i, c in enumerate(table_columns) if sort_state[i] > 0]
     ascending = [not bool(s - 1) for s in sort_state if s > 0]
@@ -139,10 +143,8 @@ def update_info_tables(page, page_size, geneid_filter, mis_filter, ois_filter, b
     ]
 
     filtered_data_nrows = len(df)
-    degree_form_message = f'Showing values between {mis_filter}' if mis_filter else ''
-    zscore_form_message = f'Showing values between {ois_filter}' if ois_filter else ''
 
-    return net_body, int(np.ceil(filtered_data_nrows / page_size)), degree_form_message, zscore_form_message
+    return net_body, int(np.ceil(filtered_data_nrows / page_size))
 
 
 

@@ -9,34 +9,44 @@ from pages.components.data import table
 path = r'assets/MIS_OIS_BM.xlsx'
 data = load_data(path)
 
-def make_filter_popover(name, input_component, delay, **kwargs):
+def make_filter_popover(name, data, step):
     return html.Div([
         dbc.Button('Filter', id=f'network-nodes-table-filter-{name}-toggle-button', color='primary', size='sm'),
         dbc.Popover(
             [
                 dbc.PopoverBody([
-                    html.P(id=f'network-nodes-table-filter-{name}-form-message'),
-                    input_component(id=f'network-nodes-table-filter-{name}', **kwargs),
+                    dcc.RangeSlider(
+                        id=f'{name}-slider',
+                        marks={i: str(i) for i in range(int(data['min']), int(data['max']) + 1)},
+                        min=0,
+                        max=data['max'],
+                        step=step,
+                        tooltip={'placement': 'bottom', 'always_visible': True},
+                        dots=True,
+                    )
                 ]),
             ],
             id=f'network-nodes-table-filter-{name}-popover',
             target=f'network-nodes-table-filter-{name}-toggle-button',
             trigger='legacy',
-            delay={'show': 0, 'hide': 0},
+            style={'width': '600px'},
         ),
     ])
+
+# Assuming you have data and a step value
+data_name = {'No.of_TTAA': {'min': 0, 'max': 180}, 'MIS': {'min': 0, 'max': 1}, 'OIS': {'min': 0, 'max': 1}, 'HMS': {'min': 0, 'max': 1}}
+step_value = 0.01
 
 filter_inputs = {
     'GeneID.PkH': dbc.Input(id='network-nodes-table-filter-GeneIDPkH', placeholder='Filter ...', size='sm'),
     'Product.Description': dbc.Input(id='network-nodes-table-filter-ProductDescription', placeholder='Filter ...', size='sm'),
-    'No.of_TTAA': make_filter_popover('No.of_TTAA', dcc.RangeSlider, 10000, pushable=True, step=0.01),
-    'MIS': make_filter_popover('MIS', dcc.RangeSlider, 10000, pushable=True, step=0.01),
-    'OIS': make_filter_popover('OIS', dcc.RangeSlider, 10000, pushable=True, step=0.01),
-    'HMS': dbc.Input(id='network-nodes-table-filter-HMS', placeholder='Filter ...', size='sm'),
+    'No.of_TTAA': make_filter_popover('No.of_TTAA', data_name['No.of_TTAA'], 10),
+    'MIS': make_filter_popover('MIS', data_name['MIS'], step_value),
+    'OIS': make_filter_popover('OIS', data_name['OIS'], step_value),
+    'HMS': make_filter_popover('HMS', data_name['HMS'], step_value),
     'GeneID.Pf_3D7': dbc.Input(id='network-nodes-table-filter-GeneIDPf_3D7', placeholder='Filter ...', size='sm'),
     'GeneID.Pb_ANKA': dbc.Input(id='network-nodes-table-filter-GeneIDPb_ANKA', placeholder='Filter ...', size='sm'),
 }
-
 
 table_columns = [
     {"id": "GeneID.PkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
@@ -44,7 +54,7 @@ table_columns = [
     {"id": "No.of_TTAA", "name": "No.of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
     {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
     {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "HMS", "name": "BM", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
     {"id": "GeneID.Pf_3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
     {"id": "GeneID.Pb_ANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
 ]
