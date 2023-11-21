@@ -4,12 +4,11 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output,State,MATCH
 import plotly.graph_objs as go
 import numpy as np
-from app import app, server
+from app import app, server, url_base_pathname
 import pages
 from importlib import import_module
 import re
 
-url_base_pathname = '/test/'
 page_modules = [mod for mod in pages.__loader__.get_resource_reader(pages.__name__).contents() if re.match('^p\d\d_', mod)]
 page_modules.sort()
 page_names = [re.sub('^p\d\d_', '', mod) for mod in page_modules]
