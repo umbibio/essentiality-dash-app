@@ -2,7 +2,7 @@ from dash import Dash, html, dcc, callback, Input, Output, State,ALL,MATCH
 import plotly.graph_objs as go
 import dash_bio as dashbio
 import plotly.express as px
-from dash import callback_context as ctx
+from dash import callback_context 
 from pages.components.data_loader import load_data,genome_data,genome
 from app import app 
 import pandas as pd
@@ -14,16 +14,16 @@ highlight_color = 'green'
 grey_color = 'lightgrey'
 path_mis = 'assets/MIS_sorted.xlsx'
 path_ois = 'assets/OIS_sorted.xlsx'
-path_bm = 'assets/BM_sorted.xlsx'
-path= 'assets/MIS_OIS_HMS_Pk_Pf_Pb_table_V2.xlsx'
+path_hms = 'assets/HMS_sorted.xlsx'
+path= 'assets/MIS_OIS_HMS_Pk_Pf_Pb_table_V3_OISMMISlike_rounded.xlsx'
 
-path_bed = r'assets\Pk_5502transcript.bed'
+path_bed = r'assets/Pk_5502transcript.bed'
 gene_to_genome = genome_data(path_bed)
 genome_list = genome(gene_to_genome)
  
 df_MIS = load_data(path_mis)
 df_OIS = load_data(path_ois)
-df_BM = load_data(path_bm)
+df_HMS = load_data(path_hms)
 data = load_data(path)
 
 tracks =[
@@ -54,36 +54,35 @@ tracks =[
 
 
 table_columns = [
-    {"id": "GeneID.PkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "Product.Description", "name": "Product.Description", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '40%', 'minWidth': '140px'}},
-    {"id": "No.of_TTAA", "name": "No.of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneIDPkH", "name": "GeneIDPkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '30%', 'minWidth': '140px'}},
+    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
     {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
     {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "HMS", "name": "BM", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "GeneID.Pf_3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "GeneID.Pb_ANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneIDPf3D7", "name": "GeneIDPf3D7", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '20%', 'minWidth': '140px'}},
+    {"id": "GeneIDPbANKA", "name": "GeneIDPbANKA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '20%', 'minWidth': '140px'}},
 ]
+ctx = callback_context
 @app.callback(
     Output('selected-network-nodes', 'data'),
     Input({'type': 'net-node-table-tr', 'index': ALL}, 'n_clicks'),
-    Input('selected-network-nodes', 'data'),
+    Input('network-nodes-table', 'children'),
+    Input('selected-network-nodes', 'data')
 )
-def update_selected_rows(row_n_clicks, data):
-    index = None  # Initialize index
+def update_selected_rows(row_n_clicks, table,data):
     if ctx.triggered[0]['prop_id'] == '.':
         raise PreventUpdate
-    if ctx.triggered[0]['prop_id'] == 'network-nodes-table.children':
-        if data == [0]:
-            raise PreventUpdate
-        return [0]
+    index = None 
     if len(ctx.triggered) == 1:
         id_str = ctx.triggered[0]['prop_id'].split('.')[0]
         id = json.loads(id_str)
         index = id['index']
-    if index is not None and index not in data:
-        data.append(index)
-    elif index is not None:
-        data.remove(index)
+    if index is not None:
+        if index not in data:
+            data = [index]
+        else:
+            data.remove(index)
     return data
 
 
@@ -93,40 +92,43 @@ def update_selected_rows(row_n_clicks, data):
     Input('network-nodes-table-pagination', 'active_page'),
     Input('network-nodes-table-page-size-radio', 'value'),
     Input('network-nodes-table-filter-GeneIDPkH', 'value'),
-    Input('network-nodes-table-filter-GeneIDPf_3D7', 'value'),
-    Input('network-nodes-table-filter-GeneIDPb_ANKA', 'value'),
+    Input('network-nodes-table-filter-Product_Description', 'value'),
+    Input('network-nodes-table-filter-GeneIDPf3D7', 'value'),
+    Input('network-nodes-table-filter-GeneIDPbANKA', 'value'),
+    Input('No_of_TTAA-slider', 'value'),
     Input('MIS-slider', 'value'),
     Input('OIS-slider', 'value'),
     Input('HMS-slider', 'value'),
-    State('network-nodes-table-sort-column-values-state', 'data'),
     State('selected-network-nodes', 'data'),
 )
-def update_info_tables(page, page_size, geneid_filter1,geneid_filter2,geneid_filter3, mis_filter, ois_filter, bm_filter, sort_state, selected_nodes):
+def update_info_tables(page, page_size, geneid_filter1,description_filter, geneid_filter2, geneid_filter3,TTAA_filter, mis_filter, ois_filter, bm_filter, selected_nodes):
     page = int(page) - 1
 
-    # Assuming 'data' is your provided data
-    df = data
+    
+    df = data.copy()  # Create a copy to avoid modifying the original data
 
+   
     if geneid_filter1:
-        df = df.loc[df['GeneID.PkH'].str.lower().str.contains(geneid_filter1.lower())]
+        df = df.loc[df['GeneIDPkH'].str.lower().str.contains(geneid_filter1.lower())]
+    if description_filter:
+        df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower())]
+    if TTAA_filter:
+        df = df.loc[(df['No_of_TTAA'] >= TTAA_filter[0]) & (df['No_of_TTAA'] <= TTAA_filter[1])]
     if mis_filter:
         df = df.loc[(df['MIS'] >= mis_filter[0]) & (df['MIS'] <= mis_filter[1])]
     if ois_filter:
         df = df.loc[(df['OIS'] >= ois_filter[0]) & (df['OIS'] <= ois_filter[1])]
     if bm_filter:
-       df = df.loc[(df['HMS'] >= ois_filter[0]) & (df['HMS'] <= ois_filter[1])]
+        df = df.loc[(df['HMS'] >= bm_filter[0]) & (df['HMS'] <= bm_filter[1])]
     if geneid_filter2:
-        df = df.loc[df['GeneID.PkH'].str.lower().str.contains(geneid_filter2.lower())]
+        df = df.loc[df['GeneIDPf3D7'].str.lower().str.contains(geneid_filter2.lower(), na=False)]
     if geneid_filter3:
-        df = df.loc[df['GeneID.PkH'].str.lower().str.contains(geneid_filter3.lower())]
+        df = df.loc[df['GeneIDPbANKA'].str.lower().str.contains(geneid_filter3.lower(), na=False)]
 
-    by = [c['id'] for i, c in enumerate(table_columns) if sort_state[i] > 0]
-    ascending = [not bool(s - 1) for s in sort_state if s > 0]
-    df = df.sort_values(by, ascending=ascending)
 
-    data_slice = [{'index': i, 'GeneID.PkH': '', 'Product.Description': ''} for i in range(page * page_size, (page + 1) * page_size)]
+    data_slice = [{'index': i, 'GeneIDPkH': '', 'Product_Description': ''} for i in range(page * page_size, (page + 1) * page_size)]
     for i, item in enumerate(df.iloc[page * page_size:(page + 1) * page_size].to_dict('records')):
-        item_with_index = {'index': i, **item} 
+        item_with_index = {'index': i, **item}
         data_slice[i].update(item_with_index)
 
     net_body = [
@@ -148,6 +150,7 @@ def update_info_tables(page, page_size, geneid_filter1,geneid_filter2,geneid_fil
 
 
 
+
 @app.callback(
     Output({'type': 'net-node-table-tr', 'index': MATCH}, 'style'),
     State({'type': 'net-node-table-tr', 'index': MATCH}, 'id'),
@@ -164,25 +167,17 @@ def update_selected_rows_style(id, data):
 
 @app.callback(
     Output('igv-container', 'children'),
-    Input('network-nodes-table', 'selected_rows'),
-    State('selected-network-nodes', 'data'),
+    Input('network-nodes-table', 'children'),
+    Input('selected-network-nodes', 'data'),
 )
-def update_igv_locus(selected_cells, table_data):
-    print("Callback Activated!")
-    print("Selected Cells:", selected_cells)
-    print(table_data)
-    print("Callback Context:", ctx.triggered_id, ctx.inputs, ctx.states)
+def update_igv_locus(table,selected_cells):
     if selected_cells:
-        selected_cell = selected_cells[0]
-
-        # Check if the selected cell is within the valid range
-        if selected_cell is not None and selected_cell['row'] < len(table_data):
-            selected_row = table_data[selected_cell['row']]
-            selected_genes = selected_row.get('geneID')
-            genome_name = gene_to_genome.get(selected_genes)
-            print(f"Selected Genes: {selected_genes}")
-            print(f"Genome Name: {genome_name}")
-            return html.Div([
+     selected_index = selected_cells[0]
+     row = table[0]['props']['children'][selected_index]['props']['children']
+     gene = row[0]
+     gene_name = gene['props']['children']
+     genome_name = gene_to_genome.get(gene_name)
+     return html.Div([
                     dashbio.Igv(
                         locus=genome_name,
                         reference={
@@ -210,30 +205,14 @@ def update_igv_locus(selected_cells, table_data):
         )
     ])
 
-     
-# @app.callback(
-#     Output('table', 'data'),
-#     [Input('xaxis-value', 'value'),Input('mis-slider', 'value')],
-# )
-# def update_table(selected_genes,value):
-#     if selected_genes:
-#         filtered_data = data[data['geneID'].isin(selected_genes)]
-#         return filtered_data.to_dict('records') 
-#     if value:
-#       min_mis, max_mis = value
-#       filtered_df = data[(data['MIS3'] >= min_mis) & (data['MIS3'] <= max_mis)]
-#       return filtered_df.to_dict('records')
-#     else :
-#      return  data.to_dict('records') 
-    
-# @app.callback(
-#     Output('download-button', 'n_clicks'),
-#     Input('xaxis-value', 'value'),
-#     Input('mis-slider', 'value'),
-#     prevent_initial_call=True,  
-# )
-# def reset_n_clicks(selected_genes, value):
-#     return None
+@app.callback(
+    Output('download-button', 'n_clicks'),
+    Input('xaxis-value', 'value'),
+    Input('mis-slider', 'value'),
+    prevent_initial_call=True,  
+)
+def reset_n_clicks(selected_genes, value):
+    return None
 
 
 # @app.callback(
@@ -310,46 +289,55 @@ def orig_graph(df, y_column, title):
      
 @app.callback(
     Output('indicator-graphic', 'figure'),
-    Input('network-nodes-table', 'selected_rows'),
-     State('selected-network-nodes', 'data'),
+    Input('selected-network-nodes', 'data'),
+    Input('network-nodes-table', 'children'),
+    
 )
-def update_graph(selected_rows,table_data):
-    if not selected_rows:
+def update_graph(selected_cells,table):
+    if not selected_cells:
      fig1 = orig_graph(df_OIS, 'OIS', 'OIS Score for Genes')
     else:
-     selected_row = table_data[selected_rows[0]]
-     selected_gene = selected_row['geneID']
-     fig1 = create_plot(df_OIS, selected_gene, 'OIS', 'OIS Score for Genes')
+     selected_index = selected_cells[0]
+     row = table[0]['props']['children'][selected_index]['props']['children']
+     gene = row[0]
+     gene_name = gene['props']['children']
+     fig1 = create_plot(df_OIS, gene_name, 'OIS', 'OIS Score for Genes')
     return fig1
 
 @app.callback(
     Output('indicator-graphic2', 'figure'),
-    Input('network-nodes-table', 'selected_rows'),
-    State('selected-network-nodes', 'data'),
+    Input('selected-network-nodes', 'data'),
+    Input('network-nodes-table', 'children'),
+    
 )
 
-def update_graph2(selected_rows,table_data):
-    if not selected_rows:
+def update_graph2(selected_cells,table):
+    if not selected_cells:
      fig2 = orig_graph(df_MIS, 'MIS3', 'MIS Score for Genes')
     else:
-     selected_row = table_data[selected_rows[0]]
-     selected_gene = selected_row['geneID']
-     fig2 = create_plot(df_MIS, selected_gene, 'MIS', 'MIS Score for Genes')
+     selected_index = selected_cells[0]
+     row = table[0]['props']['children'][selected_index]['props']['children']
+     gene = row[0]
+     gene_name = gene['props']['children']
+     fig2 = create_plot(df_MIS, gene_name, 'MIS3', 'MIS Score for Genes')
     return  fig2
 
 
 @app.callback(
     Output('indicator-graphic3', 'figure'),
-    Input('network-nodes-table', 'selected_cells'),
-     State('selected-network-nodes', 'data'),
+    Input('selected-network-nodes', 'data'),
+    Input('network-nodes-table', 'children'),
+    
 )
 
-def update_graph2(selected_rows,table_data):
-    if not selected_rows:
-     fig3 = orig_graph(df_BM, 'BM', 'HM Score for Genes')
+def update_graph2(selected_cells,table):
+    if not selected_cells:
+     fig3 = orig_graph(df_HMS, 'HMS', 'HM Score for Genes')
     else:
-     selected_row = table_data[selected_rows[0]]
-     selected_gene = selected_row['geneID']
-     fig3 = create_plot(df_BM, selected_gene, 'BM', 'BM Score for Genes')
+     selected_index = selected_cells[0]
+     row = table[0]['props']['children'][selected_index]['props']['children']
+     gene = row[0]
+     gene_name = gene['props']['children']
+     fig3 = create_plot(df_HMS, gene_name, 'HMS', 'HM Score for Genes')
     return  fig3
 

@@ -1,13 +1,9 @@
 from dash import Dash, html,dash_table,dcc, callback
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output,State
-from pages.components.dropdown_selected_gene import dropdown_selected_gene
 from pages.components.data_loader import load_data,genome_data,genome
-from pages.components.scatter_ploy import scatter_plot,scatter_plot2,scatter_plot3
-from pages.components.data import table
+from pages.components.scatter_plot import scatter_plot,scatter_plot2,scatter_plot3
 
-path = r'assets/MIS_OIS_BM.xlsx'
-data = load_data(path)
 
 def make_filter_popover(name, data, step):
     return html.Div([
@@ -34,35 +30,34 @@ def make_filter_popover(name, data, step):
     ])
 
 # Assuming you have data and a step value
-data_name = {'No.of_TTAA': {'min': 0, 'max': 180}, 'MIS': {'min': 0, 'max': 1}, 'OIS': {'min': 0, 'max': 1}, 'HMS': {'min': 0, 'max': 1}}
+data_name = {'No_of_TTAA': {'min': 0, 'max': 180}, 'MIS': {'min': 0, 'max': 1}, 'OIS': {'min': 0, 'max': 1}, 'HMS': {'min': 0, 'max': 1}}
 step_value = 0.01
 
 filter_inputs = {
-    'GeneID.PkH': dbc.Input(id='network-nodes-table-filter-GeneIDPkH', placeholder='Filter ...', size='sm'),
-    'Product.Description': dbc.Input(id='network-nodes-table-filter-ProductDescription', placeholder='Filter ...', size='sm'),
-    'No.of_TTAA': make_filter_popover('No.of_TTAA', data_name['No.of_TTAA'], 10),
+    'GeneIDPkH': dbc.Input(id='network-nodes-table-filter-GeneIDPkH', placeholder='Filter ...', size='sm'),
+    'Product_Description': dbc.Input(id='network-nodes-table-filter-Product_Description', placeholder='Filter ...', size='sm'),
+    'No_of_TTAA': make_filter_popover('No_of_TTAA', data_name['No_of_TTAA'], 10),
     'MIS': make_filter_popover('MIS', data_name['MIS'], step_value),
     'OIS': make_filter_popover('OIS', data_name['OIS'], step_value),
     'HMS': make_filter_popover('HMS', data_name['HMS'], step_value),
-    'GeneID.Pf_3D7': dbc.Input(id='network-nodes-table-filter-GeneIDPf_3D7', placeholder='Filter ...', size='sm'),
-    'GeneID.Pb_ANKA': dbc.Input(id='network-nodes-table-filter-GeneIDPb_ANKA', placeholder='Filter ...', size='sm'),
+    'GeneIDPf3D7': dbc.Input(id='network-nodes-table-filter-GeneIDPf3D7', placeholder='Filter ...', size='sm'),
+    'GeneIDPbANKA': dbc.Input(id='network-nodes-table-filter-GeneIDPbANKA', placeholder='Filter ...', size='sm'),
 }
 
 table_columns = [
-    {"id": "GeneID.PkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "Product.Description", "name": "Product.Description", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "No.of_TTAA", "name": "No.of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
     {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
     {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
     {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "GeneID.Pf_3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "GeneID.Pb_ANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
 ]
 
 menu = []
 
 body = [
-     dcc.Store(id='network-nodes-table-sort-column-values-state', data=[0 for _ in table_columns]),
       dcc.Store(id='selected-network-nodes', data=[]),
     dbc.Row([dbc.Col([
         dbc.Card([
@@ -73,13 +68,12 @@ body = [
             dbc.CardBody([
                 dbc.Row(dbc.Col(
                     dbc.Table([
-                        html.Thead([
-                            html.Tr([ html.Th([col['name'], ' ',  html.Span([html.I(className="bi bi-sort-alpha-down sort-icon", id={'type': 'network-nodes-table-sort-column-values', 'id': col['id']})]),], style=col['header_style']) for col in table_columns ]),
-                            html.Tr([ html.Th(
-                                filter_inputs[col['id']]
-                            ) for col in table_columns ]),
-                        ])
-                    ],
+                       html.Thead([
+                           html.Tr([html.Th(col['name'], style=col['header_style']) for col in table_columns]),
+                            html.Tr([html.Th(filter_inputs[col['id']]) for col in table_columns]),
+                            ])
+
+                        ],
                     id='network-nodes-table-header',
                     class_name='mb-0'),
                 )),
@@ -114,8 +108,8 @@ body = [
         ]),
     ],)], class_name='mb-4'),
      html.Br(),
-    dcc.Download(id="data-download"),
-    dbc.Button("Download Table", id="download-button"),
+    dcc.Download(id="download-data"),
+    dbc.Button("Download Table", id="download-button", n_clicks=0),
     html.Br(),
     html.Br(),
     dbc.Card(dcc.Loading(id='igv-container')),
