@@ -54,14 +54,14 @@ tracks =[
 
 
 table_columns = [
-    {"id": "GeneIDPkH", "name": "GeneIDPkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '30%', 'minWidth': '140px'}},
-    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "GeneIDPf3D7", "name": "GeneIDPf3D7", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '20%', 'minWidth': '140px'}},
-    {"id": "GeneIDPbANKA", "name": "GeneIDPbANKA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '20%', 'minWidth': '140px'}},
+    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
+    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '10%', 'minWidth': '100px'}, 'style': {'width': '20%', 'minWidth': '120px'}},
+    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
+    {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
+    {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
+    {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
+    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
+    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
 ]
 ctx = callback_context
 @app.callback(
@@ -205,14 +205,14 @@ def update_igv_locus(table,selected_cells):
         )
     ])
 
-@app.callback(
-    Output('download-button', 'n_clicks'),
-    Input('xaxis-value', 'value'),
-    Input('mis-slider', 'value'),
-    prevent_initial_call=True,  
-)
-def reset_n_clicks(selected_genes, value):
-    return None
+# @app.callback(
+#     Output('download-button', 'n_clicks'),
+#     Input('xaxis-value', 'value'),
+#     Input('mis-slider', 'value'),
+#     prevent_initial_call=True,  
+# )
+# def reset_n_clicks(selected_genes, value):
+#     return None
 
 
 # @app.callback(
@@ -242,7 +242,7 @@ def reset_n_clicks(selected_genes, value):
 def create_plot(df, selected_genes, y_column, title):
     fig = go.Figure()
  # Create a mask to identify the selected genes
-    selected_genes_mask = df['geneID'] == selected_genes
+    selected_genes_mask = df['GeneIDPkH'] == selected_genes
 
 # Separate the data into selected and unselected genes
     selected_genes_data = df[selected_genes_mask]
@@ -295,13 +295,13 @@ def orig_graph(df, y_column, title):
 )
 def update_graph(selected_cells,table):
     if not selected_cells:
-     fig1 = orig_graph(df_OIS, 'OIS', 'OIS Score for Genes')
+     fig1 = orig_graph(df_OIS, 'OIS', 'OIS ')
     else:
      selected_index = selected_cells[0]
      row = table[0]['props']['children'][selected_index]['props']['children']
      gene = row[0]
      gene_name = gene['props']['children']
-     fig1 = create_plot(df_OIS, gene_name, 'OIS', 'OIS Score for Genes')
+     fig1 = create_plot(df_OIS, gene_name, 'OIS', 'OIS ')
     return fig1
 
 @app.callback(
@@ -313,13 +313,13 @@ def update_graph(selected_cells,table):
 
 def update_graph2(selected_cells,table):
     if not selected_cells:
-     fig2 = orig_graph(df_MIS, 'MIS3', 'MIS Score for Genes')
+     fig2 = orig_graph(df_MIS, 'MIS', 'MIS ')
     else:
      selected_index = selected_cells[0]
      row = table[0]['props']['children'][selected_index]['props']['children']
      gene = row[0]
      gene_name = gene['props']['children']
-     fig2 = create_plot(df_MIS, gene_name, 'MIS3', 'MIS Score for Genes')
+     fig2 = create_plot(df_MIS, gene_name, 'MIS', 'MIS ')
     return  fig2
 
 
@@ -332,12 +332,12 @@ def update_graph2(selected_cells,table):
 
 def update_graph2(selected_cells,table):
     if not selected_cells:
-     fig3 = orig_graph(df_HMS, 'HMS', 'HM Score for Genes')
+     fig3 = orig_graph(df_HMS, 'HMS', 'HM ')
     else:
      selected_index = selected_cells[0]
      row = table[0]['props']['children'][selected_index]['props']['children']
      gene = row[0]
      gene_name = gene['props']['children']
-     fig3 = create_plot(df_HMS, gene_name, 'HMS', 'HM Score for Genes')
+     fig3 = create_plot(df_HMS, gene_name, 'HMS', 'HM ')
     return  fig3
 

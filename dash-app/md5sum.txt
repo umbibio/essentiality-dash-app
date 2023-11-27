@@ -1,13 +1,12 @@
 6c2c13cd4887847b642cdff2c282af04  assets/75Pk_20231022_TTAA.sorted.bai
 d808f14ed08d078e6dbdc722ad7c4b49  assets/75Pk_20231022_TTAA.sorted.bam
-f69c30596833b7e12ce2375ed913e3c8  assets/BM_sorted.xlsx
+4575ce178819192f51d7a7a74f6eb3ec  assets/HMS_sorted.xlsx
 7373dae97d6ed7345766159d6cb63a25  assets/logo_sida.png
-30250005b6aa906435bb985b8d8118ff  assets/MIS_OIS_BM.xlsx
-3e1ce41bc5cbcf8b1a62c7411c4e1867  assets/MIS_OIS_HMS_Pk_Pf_Pb_table_V2.xlsx
-ab77bed2410c3fc4c97ac827cc104c9c  assets/MIS_sorted.xlsx
-137267f9daebe08ce36ac3b58760c358  assets/OIS_sorted.xlsx
+c126dc11354427f2637e48d683db389f  assets/MIS_sorted.xlsx
+61f186c3c676de682e8adf266f6b5a69  assets/OIS_sorted.xlsx
 b466648b326ec5539c0b5331a909512e  assets/Pk_5502transcript.bed
 4fd8da14a9fa82ee320760d73ab1df86  assets/Pk_theo_TTAA__include_contigs_R_modified_final2.bed
 3c3ffeaf6f26465934ee9c6500f4104a  assets/PlasmoDB-58_PknowlesiH_Genome.fasta
 c9f4d881543a7ea44bd223c6faf248f9  assets/PlasmoDB-58_PknowlesiH_Genome.fasta.fai
 d493b99363f4176c8557a80b2ef7e19b  assets/PlasmoDB-58_PknowlesiH.gtf
+34ed8fb45371d679c3f0ef40acf691a3  assets/MIS_OIS_HMS_Pk_Pf_Pb_table_V3_OISMMISlike_rounded.xlsx

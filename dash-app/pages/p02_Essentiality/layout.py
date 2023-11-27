@@ -45,14 +45,14 @@ filter_inputs = {
 }
 
 table_columns = [
-    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
-    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '20%', 'minWidth': '140px'}, 'style': {'width': '10%', 'minWidth': '140px'}},
+    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
+    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '10%', 'minWidth': '100px'}, 'style': {'width': '20%', 'minWidth': '120px'}},
+    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
+    {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
+    {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
+    {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
+    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
+    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
 ]
 
 menu = []
@@ -62,8 +62,8 @@ body = [
     dbc.Row([dbc.Col([
         dbc.Card([
             dbc.CardHeader([
-                html.H4('Genes in network'),
-                html.Small('select or deselect a gene by clicking on a row in the table bellow'),
+                html.H4('Table for essentiality'),
+                html.Small('select or deselect a gene by clicking on a row in the table below'),
             ]),
             dbc.CardBody([
                 dbc.Row(dbc.Col(
@@ -114,7 +114,7 @@ body = [
     html.Br(),
     dbc.Card(dcc.Loading(id='igv-container')),
     html.Br(),
-    dbc.Row([dbc.Col(dbc.Card(scatter_plot())),
-    dbc.Col(dbc.Card(scatter_plot2())),
+    dbc.Row([dbc.Col(dbc.Card(scatter_plot2())),
+    dbc.Col(dbc.Card(scatter_plot())),
     dbc.Col(dbc.Card(scatter_plot3()))]) 
 ]
