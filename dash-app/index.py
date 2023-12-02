@@ -17,7 +17,7 @@ page_hrefs[0] = ''
 
 page_info_list = [
     {
-        'title': ' '.join([n.upper() for n in name.split('_')]),
+        'title': ' '.join([n for n in name.split('_')]),
         'module': module,
         'href': f'{url_base_pathname}{href}',
     }
@@ -76,17 +76,17 @@ def display_page(pathname):
     return None, None
 
 
-if __name__ == '__main__':
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--host', type=str, default='127.0.0.1')
-    parser.add_argument('--port', type=int, default=8080)
-    parser.add_argument('--debug', action='store_true')
-    
-    kvargs = vars(parser.parse_args())
-
-    app.run_server(**kvargs)
-
 # if __name__ == '__main__':
-#      app.run(debug=True)
+#     import argparse
+
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument('--host', type=str, default='127.0.0.1')
+#     parser.add_argument('--port', type=int, default=8080)
+#     parser.add_argument('--debug', action='store_true')
+    
+#     kvargs = vars(parser.parse_args())
+
+#     app.run_server(**kvargs)
+
+if __name__ == '__main__':
+     app.run(debug=True)

@@ -5,7 +5,7 @@ def load_data(path):
   df= pd.DataFrame(d)
   return df
 
-path_bed = r'assets/Pk_5502transcript.bed'
+path_bed = r'assets/Pk_5502transcript_modified.bed'
 def genome_data(path_bed):
    bed_data = pd.read_csv(path_bed, sep='\s+', header=None, names=['chrom', 'start', 'end', 'gene_name','dot', 'strand'])
    gene_to_genome = {row['gene_name']: f"{row['chrom']}:{row['start']}-{row['end']}" for index, row in bed_data.iterrows()}

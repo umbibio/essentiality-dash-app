@@ -6,6 +6,9 @@ from dash import callback_context
 from pages.components.data_loader import load_data,genome_data,genome
 from app import app 
 import pandas as pd
+import os
+import base64
+import io
 import numpy as np
 import json
 from dash.exceptions import PreventUpdate
@@ -17,7 +20,7 @@ path_ois = 'assets/OIS_sorted.xlsx'
 path_hms = 'assets/HMS_sorted.xlsx'
 path= 'assets/MIS_OIS_HMS_Pk_Pf_Pb_table_V3_OISMMISlike_rounded.xlsx'
 
-path_bed = r'assets/Pk_5502transcript.bed'
+path_bed = r'assets/Pk_5502transcript_modified.bed'
 gene_to_genome = genome_data(path_bed)
 genome_list = genome(gene_to_genome)
  
@@ -68,7 +71,7 @@ ctx = callback_context
     Output('selected-network-nodes', 'data'),
     Input({'type': 'net-node-table-tr', 'index': ALL}, 'n_clicks'),
     Input('network-nodes-table', 'children'),
-    Input('selected-network-nodes', 'data')
+    Input('selected-network-nodes', 'data'),
 )
 def update_selected_rows(row_n_clicks, table,data):
     if ctx.triggered[0]['prop_id'] == '.':
@@ -92,28 +95,33 @@ def update_selected_rows(row_n_clicks, table,data):
     Input('network-nodes-table-pagination', 'active_page'),
     Input('network-nodes-table-page-size-radio', 'value'),
     Input('network-nodes-table-filter-GeneIDPkH', 'value'),
+    Input('upload-gene-list', 'contents'),
     Input('network-nodes-table-filter-Product_Description', 'value'),
     Input('network-nodes-table-filter-GeneIDPf3D7', 'value'),
     Input('network-nodes-table-filter-GeneIDPbANKA', 'value'),
     Input('No_of_TTAA-slider', 'value'),
+    Input('network-nodes-table-filter-No_of_TTAA','value'),
     Input('MIS-slider', 'value'),
     Input('OIS-slider', 'value'),
     Input('HMS-slider', 'value'),
     State('selected-network-nodes', 'data'),
 )
-def update_info_tables(page, page_size, geneid_filter1,description_filter, geneid_filter2, geneid_filter3,TTAA_filter, mis_filter, ois_filter, bm_filter, selected_nodes):
+def update_info_tables(page, page_size, geneid_filter1,contents,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider,TTAA_filter_box, mis_filter, ois_filter, bm_filter, selected_nodes):
     page = int(page) - 1
 
     
     df = data.copy()  # Create a copy to avoid modifying the original data
-
-   
-    if geneid_filter1:
-        df = df.loc[df['GeneIDPkH'].str.lower().str.contains(geneid_filter1.lower())]
+    if geneid_filter1 or contents:
+        gene_ids_list = geneid_filter1.split(',')
+        df = df.loc[df['GeneIDPkH'].str.lower().isin([gene_id.lower() for gene_id in gene_ids_list])]
     if description_filter:
         df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower())]
-    if TTAA_filter:
-        df = df.loc[(df['No_of_TTAA'] >= TTAA_filter[0]) & (df['No_of_TTAA'] <= TTAA_filter[1])]
+    if TTAA_filter_slider or TTAA_filter_box:
+     if TTAA_filter_slider :
+         df = df.loc[(df['No_of_TTAA'] >= TTAA_filter_slider[0]) & (df['No_of_TTAA'] <= TTAA_filter_slider[1])]
+     elif TTAA_filter_box:
+        TTAA_filter = float(TTAA_filter_box) if TTAA_filter_box else 0
+        df = df.loc[df['No_of_TTAA'].astype(float) == TTAA_filter]
     if mis_filter:
         df = df.loc[(df['MIS'] >= mis_filter[0]) & (df['MIS'] <= mis_filter[1])]
     if ois_filter:
@@ -170,40 +178,100 @@ def update_selected_rows_style(id, data):
     Input('network-nodes-table', 'children'),
     Input('selected-network-nodes', 'data'),
 )
-def update_igv_locus(table,selected_cells):
-    if selected_cells:
-     selected_index = selected_cells[0]
-     row = table[0]['props']['children'][selected_index]['props']['children']
-     gene = row[0]
-     gene_name = gene['props']['children']
-     genome_name = gene_to_genome.get(gene_name)
-     return html.Div([
-                    dashbio.Igv(
-                        locus=genome_name,
-                        reference={
-                            'id': "Id",
-                            'name': "PKHN",
-                            'fastaURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta'),
-                            'indexURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta.fai'),
-                            'order': 1000000,
-                            'tracks': tracks
-                        }
-                    )
-                ])
+def update_igv_locus(table, selected_cells): 
+    trigger_id = ctx.triggered_id.split('.')[0]
+    if trigger_id == 'network-nodes-table':
+        raise PreventUpdate
+    elif selected_cells:
+        selected_index = selected_cells[0]
+        row = table[0]['props']['children'][selected_index]['props']['children']
+        gene = row[0]
+        gene_name = gene['props']['children']
+        genome_name = gene_to_genome.get(gene_name)
+        return [
+            dashbio.Igv(
+                locus=genome_name,
+                reference={
+                    'id': "Id",
+                    'name': "PKHN",
+                    'fastaURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta'),
+                    'indexURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta.fai'),
+                    'order': 1000000,
+                    'tracks': tracks
+                }
+            )
+        ]
+    else :
+        return [
+            dashbio.Igv(
+                reference={
+                    'id': "Id",
+                    'name': "PKHN",
+                    'fastaURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta'),
+                    'indexURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta.fai'),
+                    'order': 1000000,
+                    'tracks': tracks
+                }
+            )
+        ]
 
-    # Handle the case where no rows are selected or the selected index is out of range
-    return html.Div([
-        dashbio.Igv(
-            reference={
-                'id': "Id",
-                'name': "PKHN",
-                'fastaURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta'),
-                'indexURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta.fai'),
-                'order': 1000000,
-                'tracks': tracks
-            }
-        )
-    ])
+
+
+# @app.callback(
+#     Output('igv-store', 'data'),
+#     Input('network-nodes-table', 'children'),
+#     Input('selected-network-nodes', 'data'),
+# )
+# def update_igv_locus(table, selected_cells):
+#     trigger_id = ctx.triggered_id.split('.')[0]
+#     if trigger_id == 'network-nodes-table':
+#         raise PreventUpdate
+#     if selected_cells:
+#             selected_index = selected_cells[0]
+#             row = table[0]['props']['children'][selected_index]['props']['children']
+#             gene = row[0]
+#             gene_name = gene['props']['children']
+#             genome_name = gene_to_genome.get(gene_name)
+#             igv_content = html.Div([
+#                 dashbio.Igv(
+#                     locus=genome_name,
+#                     reference={
+#                         'id': "Id",
+#                         'name': "PKHN",
+#                         'fastaURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta'),
+#                         'indexURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta.fai'),
+#                         'order': 1000000,
+#                         'tracks': tracks
+#                     }
+#                 )
+#             ])
+#     else:
+#             igv_content = html.Div([
+#                 dashbio.Igv(
+#                     # locus=genome_name,
+#                     reference={
+#                         'id': "Id",
+#                         'name': "PKHN",
+#                         'fastaURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta'),
+#                         'indexURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta.fai'),
+#                         'order': 1000000,
+#                         'tracks': tracks
+#                     }
+#                 )
+#             ])
+#     print(igv_content)
+#     return {'children': igv_content}
+    
+
+
+# Modify the callback to update the IGV component only when needed
+# @app.callback(
+#     Output('igv-container', 'children'),
+#     Input('igv-store', 'data'),
+# )
+# def update_igv_container(igv_store_data):
+#     return igv_store_data['children']
+
 
 # @app.callback(
 #     Output('download-button', 'n_clicks'),
@@ -277,6 +345,7 @@ def create_plot(df, selected_genes, y_column, title):
     fig.update_xaxes(showline=True, linecolor='black')
     fig.update_yaxes(showline=True, linecolor='black')
     return fig
+
 def orig_graph(df, y_column, title):
      df['color'] = df['GeneIndex']
      fig1 = px.scatter(df, x='GeneIndex', y=y_column, color=y_column, color_continuous_scale=['blue', 'white', 'red'])
@@ -332,12 +401,64 @@ def update_graph2(selected_cells,table):
 
 def update_graph2(selected_cells,table):
     if not selected_cells:
-     fig3 = orig_graph(df_HMS, 'HMS', 'HM ')
+     fig3 = orig_graph(df_HMS, 'HMS', 'HMS')
     else:
      selected_index = selected_cells[0]
      row = table[0]['props']['children'][selected_index]['props']['children']
      gene = row[0]
      gene_name = gene['props']['children']
-     fig3 = create_plot(df_HMS, gene_name, 'HMS', 'HM ')
+     fig3 = create_plot(df_HMS, gene_name, 'HMS', 'HMS')
     return  fig3
+
+
+@app.callback(
+    Output('network-nodes-table-filter-GeneIDPkH', 'value'),
+    Input('upload-gene-list', 'contents'),
+    State('upload-gene-list', 'filename'),
+    prevent_initial_call=True,
+)
+def update_manual_entry_from_upload(contents, filename):
+    if contents is None:
+        # Return an empty string if no contents are provided
+        return ''
+
+    _, file_extension = os.path.splitext(filename)
+
+    if file_extension.lower() not in ['.csv', '.txt']:
+        raise Exception('Unsupported file format')
+
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+
+    try:
+        if file_extension.lower() == '.csv':
+            df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
+        elif file_extension.lower() == '.txt':
+            df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None, delimiter=',')
+
+            if df.shape[1] == 1:
+                # If there's only one column, use its values as the filter value
+                filter_value = ','.join(df.iloc[:, 0].astype(str).tolist())
+            else:
+                # If there are multiple columns, use the first row as column names
+                df.columns = [f'Column_{i}' for i in range(df.shape[1])]
+                filter_value = ','.join(df.iloc[0].astype(str).tolist())
+        else:
+            raise Exception('Unsupported file format')
+
+        return filter_value
+
+    except Exception as e:
+        print(f"Error in update_manual_entry_from_upload: {e}")
+        return ''
+
+@app.callback(
+    Output("upload-popover", "is_open"),
+    [Input("upload-button", "n_clicks"), Input("close-popover-button", "n_clicks")],
+    [State("upload-popover", "is_open")],
+)
+def toggle_popover(n_clicks, n_close_clicks, is_open):
+    if n_clicks or n_close_clicks:
+        return not is_open
+    return is_open
 
