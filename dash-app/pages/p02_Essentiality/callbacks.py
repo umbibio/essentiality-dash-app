@@ -95,43 +95,50 @@ def update_selected_rows(row_n_clicks, table,data):
     Input('network-nodes-table-pagination', 'active_page'),
     Input('network-nodes-table-page-size-radio', 'value'),
     Input('network-nodes-table-filter-GeneIDPkH', 'value'),
-    Input('upload-gene-list', 'contents'),
+    Input('gene-list-store','data'),
+    Input('upload-modal-button', 'n_clicks'),
     Input('network-nodes-table-filter-Product_Description', 'value'),
     Input('network-nodes-table-filter-GeneIDPf3D7', 'value'),
     Input('network-nodes-table-filter-GeneIDPbANKA', 'value'),
     Input('No_of_TTAA-slider', 'value'),
-    Input('network-nodes-table-filter-No_of_TTAA','value'),
+    # Input('network-nodes-table-filter-No_of_TTAA','value'),
     Input('MIS-slider', 'value'),
     Input('OIS-slider', 'value'),
     Input('HMS-slider', 'value'),
     State('selected-network-nodes', 'data'),
+    Input('clear-button', 'n_clicks'), 
 )
-def update_info_tables(page, page_size, geneid_filter1,contents,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider,TTAA_filter_box, mis_filter, ois_filter, bm_filter, selected_nodes):
+def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks):
     page = int(page) - 1
 
     
     df = data.copy()  # Create a copy to avoid modifying the original data
-    if geneid_filter1 or contents:
-        gene_ids_list = geneid_filter1.split(',')
-        df = df.loc[df['GeneIDPkH'].str.lower().isin([gene_id.lower() for gene_id in gene_ids_list])]
+    if clear_clicks:
+        df = data.copy()
+    if geneid_filter1 or upload_clicks and not clear_clicks:
+        if geneid_filter1 :
+           df = df.loc[df['GeneIDPkH'].str.lower().str.contains(geneid_filter1.lower())]
+        if upload_clicks:
+         gene_ids_list = list.split(',')
+         df = df.loc[df['GeneIDPkH'].str.lower().isin([gene_id.lower() for gene_id in gene_ids_list])]
     if description_filter:
-        df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower())]
-    if TTAA_filter_slider or TTAA_filter_box:
+     df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower())]
+    if TTAA_filter_slider :
      if TTAA_filter_slider :
-         df = df.loc[(df['No_of_TTAA'] >= TTAA_filter_slider[0]) & (df['No_of_TTAA'] <= TTAA_filter_slider[1])]
-     elif TTAA_filter_box:
-        TTAA_filter = float(TTAA_filter_box) if TTAA_filter_box else 0
-        df = df.loc[df['No_of_TTAA'].astype(float) == TTAA_filter]
+      df = df.loc[(df['No_of_TTAA'] >= TTAA_filter_slider[0]) & (df['No_of_TTAA'] <= TTAA_filter_slider[1])]
+    #  elif TTAA_filter_box:
+    #     TTAA_filter = float(TTAA_filter_box) if TTAA_filter_box else 0
+        # df = df.loc[df['No_of_TTAA'].astype(float) == TTAA_filter]
     if mis_filter:
-        df = df.loc[(df['MIS'] >= mis_filter[0]) & (df['MIS'] <= mis_filter[1])]
+      df = df.loc[(df['MIS'] >= mis_filter[0]) & (df['MIS'] <= mis_filter[1])]
     if ois_filter:
-        df = df.loc[(df['OIS'] >= ois_filter[0]) & (df['OIS'] <= ois_filter[1])]
+     df = df.loc[(df['OIS'] >= ois_filter[0]) & (df['OIS'] <= ois_filter[1])]
     if bm_filter:
-        df = df.loc[(df['HMS'] >= bm_filter[0]) & (df['HMS'] <= bm_filter[1])]
+     df = df.loc[(df['HMS'] >= bm_filter[0]) & (df['HMS'] <= bm_filter[1])]
     if geneid_filter2:
-        df = df.loc[df['GeneIDPf3D7'].str.lower().str.contains(geneid_filter2.lower(), na=False)]
+      df = df.loc[df['GeneIDPf3D7'].str.lower().str.contains(geneid_filter2.lower(),na=False)]
     if geneid_filter3:
-        df = df.loc[df['GeneIDPbANKA'].str.lower().str.contains(geneid_filter3.lower(), na=False)]
+     df = df.loc[df['GeneIDPbANKA'].str.lower().str.contains(geneid_filter3.lower(),na=False)]
 
 
     data_slice = [{'index': i, 'GeneIDPkH': '', 'Product_Description': ''} for i in range(page * page_size, (page + 1) * page_size)]
@@ -161,6 +168,7 @@ def update_info_tables(page, page_size, geneid_filter1,contents,description_filt
 
 @app.callback(
     Output({'type': 'net-node-table-tr', 'index': MATCH}, 'style'),
+    Output({'type': 'net-node-table-tr', 'index': MATCH}, 'className'),
     State({'type': 'net-node-table-tr', 'index': MATCH}, 'id'),
     Input('selected-network-nodes', 'data'), )
 def update_selected_rows_style(id, data):
@@ -170,7 +178,7 @@ def update_selected_rows_style(id, data):
     else:
         style = {"fontWeight": 'normal'}
         className = ''
-    return style
+    return style,className
 
 
 @app.callback(
@@ -215,95 +223,103 @@ def update_igv_locus(table, selected_cells):
             )
         ]
 
-
-
-# @app.callback(
-#     Output('igv-store', 'data'),
-#     Input('network-nodes-table', 'children'),
-#     Input('selected-network-nodes', 'data'),
-# )
-# def update_igv_locus(table, selected_cells):
-#     trigger_id = ctx.triggered_id.split('.')[0]
-#     if trigger_id == 'network-nodes-table':
-#         raise PreventUpdate
-#     if selected_cells:
-#             selected_index = selected_cells[0]
-#             row = table[0]['props']['children'][selected_index]['props']['children']
-#             gene = row[0]
-#             gene_name = gene['props']['children']
-#             genome_name = gene_to_genome.get(gene_name)
-#             igv_content = html.Div([
-#                 dashbio.Igv(
-#                     locus=genome_name,
-#                     reference={
-#                         'id': "Id",
-#                         'name': "PKHN",
-#                         'fastaURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta'),
-#                         'indexURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta.fai'),
-#                         'order': 1000000,
-#                         'tracks': tracks
-#                     }
-#                 )
-#             ])
-#     else:
-#             igv_content = html.Div([
-#                 dashbio.Igv(
-#                     # locus=genome_name,
-#                     reference={
-#                         'id': "Id",
-#                         'name': "PKHN",
-#                         'fastaURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta'),
-#                         'indexURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta.fai'),
-#                         'order': 1000000,
-#                         'tracks': tracks
-#                     }
-#                 )
-#             ])
-#     print(igv_content)
-#     return {'children': igv_content}
     
 
 
-# Modify the callback to update the IGV component only when needed
-# @app.callback(
-#     Output('igv-container', 'children'),
-#     Input('igv-store', 'data'),
-# )
-# def update_igv_container(igv_store_data):
-#     return igv_store_data['children']
 
 
-# @app.callback(
-#     Output('download-button', 'n_clicks'),
-#     Input('xaxis-value', 'value'),
-#     Input('mis-slider', 'value'),
-#     prevent_initial_call=True,  
-# )
-# def reset_n_clicks(selected_genes, value):
-#     return None
+@app.callback(
+    Output('download-button', 'n_clicks'),
+    Input('network-nodes-table-filter-GeneIDPkH', 'value'),
+    Input('gene-list-store','data'),
+    Input('upload-modal-button', 'n_clicks'),
+    Input('network-nodes-table-filter-Product_Description', 'value'),
+    Input('network-nodes-table-filter-GeneIDPf3D7', 'value'),
+    Input('network-nodes-table-filter-GeneIDPbANKA', 'value'),
+    Input('No_of_TTAA-slider', 'value'),
+    # Input('network-nodes-table-filter-No_of_TTAA','value'),
+    Input('MIS-slider', 'value'),
+    Input('OIS-slider', 'value'),
+    Input('HMS-slider', 'value'),
+    State('selected-network-nodes', 'data'),
+    Input('clear-button', 'n_clicks'), 
+    prevent_initial_call=True,
+) 
+def reset_n_clicks(geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks):
+    return None
 
-
-# @app.callback(
-#     Output('data-download', 'data'),
-#     Input('download-button', 'n_clicks'),
-#     Input('xaxis-value', 'value'),
-#     Input('mis-slider', 'value'),
-#     prevent_initial_call=True,
-# )
-# def update_download_button(n_clicks, selected_genes,value):
-#     if n_clicks is None:
-#         raise PreventUpdate
-#     if selected_genes:
-#         filtered_data = data[data['geneID'].isin(selected_genes)]
-#         csv_string = filtered_data.to_csv(index=False, encoding='utf-8')
-#         return dict(content=csv_string, filename=f"{','.join(selected_genes)}_table.csv")
-#     if value:
-#      min_mis, max_mis = value
-#      filtered_df = data[(data['MIS3'] >= min_mis) & (data['MIS3'] <= max_mis)]
-#      csv_string = filtered_df.to_csv(index=False, encoding='utf-8')
-#      return dict(content=csv_string, filename=f"MIS_range_{min_mis}_{max_mis}_table.csv")
-#     csv_string = data.to_csv(index=False, encoding='utf-8')
-#     return dict(content=csv_string, filename=f"datatable.csv")
+@app.callback(
+    Output('download-data', 'data'),
+    Input('download-button', 'n_clicks'),
+    Input('network-nodes-table-filter-GeneIDPkH', 'value'),
+    Input('gene-list-store','data'),
+    Input('upload-modal-button', 'n_clicks'),
+    Input('network-nodes-table-filter-Product_Description', 'value'),
+    Input('network-nodes-table-filter-GeneIDPf3D7', 'value'),
+    Input('network-nodes-table-filter-GeneIDPbANKA', 'value'),
+    Input('No_of_TTAA-slider', 'value'),
+    # Input('network-nodes-table-filter-No_of_TTAA','value'),
+    Input('MIS-slider', 'value'),
+    Input('OIS-slider', 'value'),
+    Input('HMS-slider', 'value'),
+    State('selected-network-nodes', 'data'),
+    Input('clear-button', 'n_clicks'), 
+    prevent_initial_call=True,
+)
+def update_download_button(n_clicks, geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks):
+   if n_clicks is None:
+      PreventUpdate
+   if n_clicks is not None:
+    df = data.copy()  # Create a copy to avoid modifying the original data
+    if clear_clicks:
+        df = data.copy()
+        csv_string = df.to_csv(index=False, encoding='utf-8')
+        return dict(content=csv_string, filename=f"datatable.csv")
+    if geneid_filter1 or upload_clicks and not clear_clicks:
+        if geneid_filter1 :
+           df = df.loc[df['GeneIDPkH'].str.lower().str.contains(geneid_filter1.lower())]
+           csv_string = df.to_csv(index=False, encoding='utf-8')
+           return dict(content=csv_string, filename=f"{(geneid_filter1)}_table.csv")
+        if upload_clicks:
+         gene_ids_list = list.split(',')
+         df = df.loc[df['GeneIDPkH'].str.lower().isin([gene_id.lower() for gene_id in gene_ids_list])]
+         csv_string = df.to_csv(index=False, encoding='utf-8')
+         return dict(content=csv_string, filename=f"{','.join(gene_ids_list)}_table.csv")
+    if description_filter:
+     df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower())]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"{(description_filter)}_table.csv")
+    if TTAA_filter_slider :
+     if TTAA_filter_slider :
+      df = df.loc[(df['No_of_TTAA'] >= TTAA_filter_slider[0]) & (df['No_of_TTAA'] <= TTAA_filter_slider[1])]
+      csv_string = df.to_csv(index=False, encoding='utf-8')
+      return dict(content=csv_string, filename=f"No_of_TTAA_range_{TTAA_filter_slider[0]}_{TTAA_filter_slider[1]}_table.csv")
+    #  elif TTAA_filter_box:
+    #     TTAA_filter = float(TTAA_filter_box) if TTAA_filter_box else 0
+        # df = df.loc[df['No_of_TTAA'].astype(float) == TTAA_filter]
+    if mis_filter:
+      df = df.loc[(df['MIS'] >= mis_filter[0]) & (df['MIS'] <= mis_filter[1])]
+      csv_string = df.to_csv(index=False, encoding='utf-8')
+      return dict(content=csv_string, filename=f"MIS_range_{mis_filter[0]}_{mis_filter[1]}_table.csv")
+    if ois_filter:
+     df = df.loc[(df['OIS'] >= ois_filter[0]) & (df['OIS'] <= ois_filter[1])]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"OIS_range_{ois_filter[0]}_{ois_filter[1]}_table.csv")
+    if bm_filter:
+     df = df.loc[(df['HMS'] >= bm_filter[0]) & (df['HMS'] <= bm_filter[1])]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"HMS_range_{bm_filter[0]}_{bm_filter[1]}_table.csv")
+    if geneid_filter2:
+      df = df.loc[df['GeneIDPf3D7'].str.lower().str.contains(geneid_filter2.lower(),na=False)]
+      csv_string = df.to_csv(index=False, encoding='utf-8')
+      return dict(content=csv_string, filename=f"{(geneid_filter2)}_table.csv")
+    if geneid_filter3:
+     df = df.loc[df['GeneIDPbANKA'].str.lower().str.contains(geneid_filter3.lower(),na=False)]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"{(geneid_filter3)}_table.csv")
+    else:
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"datatable.csv")
 
 
 
@@ -319,7 +335,7 @@ def create_plot(df, selected_genes, y_column, title):
             x=unselected_genes_data['GeneIndex'],
             y=unselected_genes_data[y_column],
             mode='markers',
-            marker=dict(color=grey_color, size=10),
+            marker=dict(color=unselected_genes_data['GeneIndex'], colorscale=['blue', 'white', 'red'], size=10),
             name='All Genes'
         )
     fig.add_trace(grey_plot)
@@ -329,7 +345,7 @@ def create_plot(df, selected_genes, y_column, title):
             x=selected_genes_data['GeneIndex'],
             y=selected_genes_data[y_column],
             mode='markers',
-            marker=dict(color=highlight_color, size=10),
+            marker=dict(color=highlight_color, size=15),
             name=selected_genes
         )
         fig.add_trace(red_plot)
@@ -411,54 +427,79 @@ def update_graph2(selected_cells,table):
     return  fig3
 
 
-@app.callback(
-    Output('network-nodes-table-filter-GeneIDPkH', 'value'),
-    Input('upload-gene-list', 'contents'),
-    State('upload-gene-list', 'filename'),
-    prevent_initial_call=True,
-)
-def update_manual_entry_from_upload(contents, filename):
-    if contents is None:
-        # Return an empty string if no contents are provided
-        return ''
-
-    _, file_extension = os.path.splitext(filename)
-
-    if file_extension.lower() not in ['.csv', '.txt']:
-        raise Exception('Unsupported file format')
-
-    content_type, content_string = contents.split(',')
-    decoded = base64.b64decode(content_string)
-
-    try:
-        if file_extension.lower() == '.csv':
-            df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
-        elif file_extension.lower() == '.txt':
-            df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None, delimiter=',')
-
-            if df.shape[1] == 1:
-                # If there's only one column, use its values as the filter value
-                filter_value = ','.join(df.iloc[:, 0].astype(str).tolist())
-            else:
-                # If there are multiple columns, use the first row as column names
-                df.columns = [f'Column_{i}' for i in range(df.shape[1])]
-                filter_value = ','.join(df.iloc[0].astype(str).tolist())
-        else:
-            raise Exception('Unsupported file format')
-
-        return filter_value
-
-    except Exception as e:
-        print(f"Error in update_manual_entry_from_upload: {e}")
-        return ''
 
 @app.callback(
-    Output("upload-popover", "is_open"),
-    [Input("upload-button", "n_clicks"), Input("close-popover-button", "n_clicks")],
-    [State("upload-popover", "is_open")],
+    Output('upload-modal', 'is_open'),
+    [Input('open-modal-button', 'n_clicks'),Input('upload-modal-button', 'n_clicks'),],
+    [State('upload-modal', 'is_open')]
 )
-def toggle_popover(n_clicks, n_close_clicks, is_open):
-    if n_clicks or n_close_clicks:
+def toggle_modal(open_clicks,upload_clicks,is_open):
+    if open_clicks or upload_clicks :
         return not is_open
     return is_open
 
+@app.callback(
+    # Output('network-nodes-table-filter-GeneIDPkH', 'value'),
+    Output('gene-list-store','data'),
+    Input('upload-gene-list', 'contents'),
+    State('upload-gene-list', 'filename'),
+    Input('copy-paste-gene-list', 'value'),
+    Input('upload-modal-button', 'n_clicks'), 
+    Input('clear-button', 'n_clicks'), 
+    prevent_initial_call=True,
+)
+def update_manual_entry_from_upload(contents, filename, copy_paste_value, upload_clicks,clear):
+    if upload_clicks is None:
+        raise PreventUpdate
+    
+    if contents is not None and upload_clicks and not clear:
+        _, file_extension = os.path.splitext(filename)
+
+        if file_extension.lower() not in ['.csv', '.txt']:
+              raise Exception('Unsupported file format')
+
+        content_type, content_string = contents.split(',')  
+        decoded = base64.b64decode(content_string)
+
+        try:
+            if file_extension.lower() == '.csv':
+                df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
+            elif file_extension.lower() == '.txt':
+                df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None, delimiter=',')
+
+                if df.shape[1] == 1:
+                    # If there's only one column, use its values as the filter value
+                    filter_value = ','.join(df.iloc[:, 0].astype(str).tolist())
+                else:
+                    # If there are multiple columns, use the first row as column names
+                    df.columns = [f'Column_{i}' for i in range(df.shape[1])]
+                    filter_value = ','.join(df.iloc[0].astype(str).tolist())
+            else:
+                raise Exception('Unsupported file format')
+
+            return filter_value
+
+        except Exception as e:
+            print(f"Error in update_manual_entry_from_upload: {e}")
+            return ''
+    elif copy_paste_value and upload_clicks and not clear:
+        return copy_paste_value.strip()
+    else:
+        raise PreventUpdate
+    
+@app.callback(
+    Output('clear-button', 'n_clicks'),
+    Input('upload-modal-button', 'n_clicks'), 
+    prevent_initial_call=True,  
+)
+def reset_n_clicks(n):
+    return None
+
+@app.callback(
+   Output('copy-paste-gene-list', 'value'),
+   Input('clear-button', 'n_clicks'),
+)
+def clear_list(n):
+   if n :
+      return ''
+      

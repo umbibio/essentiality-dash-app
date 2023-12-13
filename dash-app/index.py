@@ -31,7 +31,9 @@ for page in page_info_list:
 nav = dbc.Nav([
     dbc.NavItem(dbc.NavLink(page['title'], href=page['href'], id={'type': 'navlink', 'page': page['module']}))
     for page in page_info_list ], pills=True)
+
 logo = html.Img(src=app.get_asset_url('logo_sida.png'), className="img-fluid")
+
 app.layout = dbc.Container(
     dbc.Row([
         dcc.Location(id='url', refresh=False),

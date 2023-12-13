@@ -16,11 +16,12 @@ def make_filter_popover(name, data, step):
                     dcc.RangeSlider(
                         id=f'{name}-slider',
                         # marks={i: str(i) for i in range(int(data['min']), int(data['max']) + 1)},
+                        marks={data['min']: str(data['min']), data['max']: str(data['max'])},
                         min=0,
                         max=data['max'],
                         step=step,
-                        # tooltip={'placement': 'bottom', 'always_visible': True},
-                        # dots=True,
+                        tooltip={'placement': 'bottom', 'always_visible': False},
+                        dots=False,
                         # included=False, 
                         # pushable=True
                     )
@@ -35,13 +36,14 @@ def make_filter_popover(name, data, step):
 
 # Assuming you have data and a step value
 data_name = {'No_of_TTAA': {'min': 0, 'max': 180}, 'MIS': {'min': 0, 'max': 1}, 'OIS': {'min': 0, 'max': 1}, 'HMS': {'min': 0, 'max': 1}}
-step_value = 0.2
+step_value = 0.1
 
 filter_inputs = {
     'GeneIDPkH': dbc.Input(id='network-nodes-table-filter-GeneIDPkH', placeholder='Filter ...', size='sm'),
     'Product_Description': dbc.Input(id='network-nodes-table-filter-Product_Description', placeholder='Filter ...', size='sm'),
     'No_of_TTAA': [
-        make_filter_popover('No_of_TTAA', data_name['No_of_TTAA'], 20),dbc.Input(id='network-nodes-table-filter-No_of_TTAA', placeholder='Filter ...',  size='sm', style={'width': '50px'})
+        make_filter_popover('No_of_TTAA', data_name['No_of_TTAA'], 1),
+        # dbc.Input(id='network-nodes-table-filter-No_of_TTAA', placeholder='Filter ...',  size='sm', style={'width': '50px'})
     ],
     'MIS': make_filter_popover('MIS', data_name['MIS'], step_value),
     'OIS': make_filter_popover('OIS', data_name['OIS'], step_value),
@@ -94,7 +96,7 @@ menu = []
 
 body = [
       dcc.Store(id='selected-network-nodes', data=[]),
-      dcc.Store(id='igv-store', data={'children': None}),
+      dcc.Store(id='gene-list-store', data={}),
     dbc.Row([dbc.Col([
         dbc.Card([
             dbc.CardHeader([
@@ -106,7 +108,12 @@ body = [
                     dbc.Table([
                        html.Thead([
                            html.Tr([html.Th(col['name'], style=col['header_style']) for col in table_columns]),
-                            html.Tr([html.Th(filter_inputs[col['id']]) for col in table_columns]),
+                           html.Tr([
+                         html.Th(
+                                filter_inputs[col['id']]
+                            ) for col in table_columns ])
+
+
                             ])
 
                         ],
@@ -140,38 +147,42 @@ body = [
                         ), className='radio-group'),
                     ], width={'size': 2}, ),
                 ]),
-                dbc.Row([
-                        dbc.Col([
-                             dbc.Popover(
-                [
-                    dbc.PopoverHeader( [dbc.Row([
-                        dbc.Col([dcc.Markdown("Upload Gene List"),],width={'size': 8}),
-                        dbc.Col([dbc.Button("X", id="close-popover-button", color="secondary")]),
-                ])]),
-                    dbc.PopoverBody([
-                                dcc.Markdown("Please upload a .txt or .csv file with comma seperated GeneIds."),
-                                dcc.Upload(
-                                id='upload-gene-list',
-                                children=dbc.Button('Upload Gene List'),
-                                multiple=False
-                            )]),
-                             dbc.PopoverHeader(
-                           
-                          ),
-                ],
-                id="upload-popover",
+              dbc.Row([
+        dbc.Col([
+            dbc.Modal([
+                dbc.ModalHeader("Upload Gene List"),
+                dbc.ModalBody([
+                    dcc.Markdown("Please upload a .txt or .csv file with comma-separated GeneIds."),
+                    dcc.Upload(
+                        id='upload-gene-list',
+                        children=dbc.Button('Upload Gene List'),
+                        multiple=False
+                    ),
+                    html.Hr(),
+                    dcc.Markdown("Or copy and paste the comma seperated gene list below:"),
+                    dcc.Textarea(id='copy-paste-gene-list',rows=10, placeholder='Paste GeneIds here'),
+                ]),
+                dbc.ModalFooter([
+                    dbc.Button("Upload", id="upload-modal-button", color="primary"),
+                ]),
+            ],
+                id="upload-modal",
                 is_open=False,
-                target="upload-button",
             ),
-                    dbc.Button("Upload Gene List", id="upload-button"),      
-                        ]),
-                    ]),
+            dbc.Button("Upload gene list", id="open-modal-button"),
+        ]),
+  
+    dbc.Col([
+        dbc.Button("Clear gene list", id="clear-button"),
+    ])
+      ]),
+
             ]),
         ]),
     ],)], class_name='mb-4'),
      html.Br(),
     dcc.Download(id="download-data"),
-    dbc.Button("Download Table", id="download-button", n_clicks=0),
+    dbc.Button("Download Table", id="download-button",n_clicks=0),
     html.Br(),
     html.Br(),
     # dbc.Card(dcc.Loading(id='igv-container')),
