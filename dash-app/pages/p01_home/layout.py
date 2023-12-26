@@ -3,8 +3,10 @@ from dash import html
 
 import dash_bootstrap_components as dbc
 
-menu = None
+# Define a variable 'menu' which is currently set to None
 
+menu = None
+# Define the layout of the body using Dash Bootstrap Components
 body = [
     dbc.Row(dbc.Col(
         dbc.Card([

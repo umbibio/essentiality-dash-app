@@ -6,7 +6,7 @@ from dash.dependencies import Input, Output,State
 from pages.components.data_loader import load_data,genome_data,genome
 from pages.components.scatter_plot import scatter_plot,scatter_plot2,scatter_plot3
 
-
+# Define a function to create a filter popover for a specific column
 def make_filter_popover(name, data, step):
     return html.Div([
         dbc.Button('Filter', id=f'network-nodes-table-filter-{name}-toggle-button', color='primary', size='sm'),
@@ -34,10 +34,11 @@ def make_filter_popover(name, data, step):
         ),
     ])
 
-# Assuming you have data and a step value
+# Define data and step value for filter popovers
 data_name = {'No_of_TTAA': {'min': 0, 'max': 180}, 'MIS': {'min': 0, 'max': 1}, 'OIS': {'min': 0, 'max': 1}, 'HMS': {'min': 0, 'max': 1}}
 step_value = 0.1
 
+# Define filter inputs for each column
 filter_inputs = {
     'GeneIDPkH': dbc.Input(id='network-nodes-table-filter-GeneIDPkH', placeholder='Filter ...', size='sm'),
     'Product_Description': dbc.Input(id='network-nodes-table-filter-Product_Description', placeholder='Filter ...', size='sm'),
@@ -52,6 +53,7 @@ filter_inputs = {
     'GeneIDPbANKA': dbc.Input(id='network-nodes-table-filter-GeneIDPbANKA', placeholder='Filter ...', size='sm'),
 }
 
+# Define table columns
 table_columns = [
     {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
     {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '10%', 'minWidth': '100px'}, 'style': {'width': '20%', 'minWidth': '120px'}},
@@ -62,11 +64,12 @@ table_columns = [
     {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
     {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
 ]
-
+# Define the path for the BED file
 path_bed = r'assets/Pk_5502transcript_modified.bed'
+# Load data and create genome information
 gene_to_genome = genome_data(path_bed)
 genome_list = genome(gene_to_genome)
-
+# Define tracks for IGV component
 tracks =[
                 {
                     'name': 'TTAA Track',
@@ -92,8 +95,9 @@ tracks =[
                     'color': 'rgb(255,0,0)'
                 },
             ]
+# Initialize menu as an empty list
 menu = []
-
+# Define the layout for the body of the app
 body = [
       dcc.Store(id='selected-network-nodes', data=[]),
       dcc.Store(id='gene-list-store', data={}),

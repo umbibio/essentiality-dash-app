@@ -9,12 +9,15 @@ import pages
 from importlib import import_module
 import re
 
+# Get the list of page modules and sort them
 page_modules = [mod for mod in pages.__loader__.get_resource_reader(pages.__name__).contents() if re.match('^p\d\d_', mod)]
 page_modules.sort()
+# Extract page names and corresponding hrefs
 page_names = [re.sub('^p\d\d_', '', mod) for mod in page_modules]
 page_hrefs = page_names.copy()
 page_hrefs[0] = ''
 
+# Create a list of dictionaries containing page information
 page_info_list = [
     {
         'title': ' '.join([n for n in name.split('_')]),
@@ -23,17 +26,17 @@ page_info_list = [
     }
     for name, module, href in zip(page_names, page_modules, page_hrefs)
 ]
-
+# Import each page module
 for page in page_info_list:
     import_module(f"pages.{page['module']}")
 
-
+# Create navigation links based on page information
 nav = dbc.Nav([
     dbc.NavItem(dbc.NavLink(page['title'], href=page['href'], id={'type': 'navlink', 'page': page['module']}))
     for page in page_info_list ], pills=True)
-
+#Create a logo using the app's asset
 logo = html.Img(src=app.get_asset_url('logo_sida.png'), className="img-fluid")
-
+#  set up the overall layout
 app.layout = dbc.Container(
     dbc.Row([
         dcc.Location(id='url', refresh=False),
@@ -56,6 +59,16 @@ app.layout = dbc.Container(
     Input('url', 'pathname'),
     State({'type': 'navlink', 'page': MATCH}, 'href'),)
 def update_active_menu(pathname, page_href):
+    """
+    Update the active menu link based on the current URL pathname.
+
+    Parameters:
+        - pathname (str): The current URL pathname.
+        - page_href (str): The href of the menu link being considered.
+
+    Returns:
+        - bool: True if the link is active, False otherwise.
+    """
     return pathname == page_href
 
 
@@ -63,6 +76,15 @@ def update_active_menu(pathname, page_href):
               Output('page-content', 'children'),
               Input('url', 'pathname'))
 def display_page(pathname):
+    """
+    Display the content and menu of the selected page.
+
+    Parameters:
+        - pathname (str): The current URL pathname.
+
+    Returns:
+        - children (tuple): The left-menu and page-content components.
+    """
     print(f"display page: {pathname}", flush=True)
 
     for page in page_info_list:
@@ -77,7 +99,7 @@ def display_page(pathname):
     print(f"page not found: {pathname}", flush=True)
     return None, None
 
-
+# Entry point for running the app
 if __name__ == '__main__':
     import argparse
 
@@ -88,6 +110,7 @@ if __name__ == '__main__':
     
     kvargs = vars(parser.parse_args())
 
+ # Run the Dash app with specified arguments
     app.run_server(**kvargs)
 
 # if __name__ == '__main__':

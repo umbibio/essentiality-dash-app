@@ -13,22 +13,28 @@ import numpy as np
 import json
 from dash.exceptions import PreventUpdate
 
+# Set color variables for highlighting in the app
 highlight_color = 'green'
 grey_color = 'lightgrey'
+# Define file paths for different data sets
 path_mis = 'assets/MIS_sorted.xlsx'
 path_ois = 'assets/OIS_sorted.xlsx'
 path_hms = 'assets/HMS_sorted.xlsx'
 path= 'assets/MIS_OIS_HMS_Pk_Pf_Pb_table_V3_OISMMISlike_rounded.xlsx'
-
+# Define the path for genome data in BED format
 path_bed = r'assets/Pk_5502transcript_modified.bed'
+# Load genome data from the BED file
 gene_to_genome = genome_data(path_bed)
+# Extract genome names from the loaded genome data
 genome_list = genome(gene_to_genome)
  
+ # Load data from Excel files into Pandas DataFrames
 df_MIS = load_data(path_mis)
 df_OIS = load_data(path_ois)
 df_HMS = load_data(path_hms)
 data = load_data(path)
 
+# Define tracks for visualization in the IGV component
 tracks =[
                 {
                     'name': 'TTAA Track',
@@ -55,7 +61,7 @@ tracks =[
                 },
             ]
 
-
+# Define columns for the data table
 table_columns = [
     {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
     {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '10%', 'minWidth': '100px'}, 'style': {'width': '20%', 'minWidth': '120px'}},
@@ -66,7 +72,9 @@ table_columns = [
     {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
     {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
 ]
+# Define the Dash app callback context
 ctx = callback_context
+# Define the callback for updating selected network nodes
 @app.callback(
     Output('selected-network-nodes', 'data'),
     Input({'type': 'net-node-table-tr', 'index': ALL}, 'n_clicks'),
@@ -74,6 +82,17 @@ ctx = callback_context
     Input('selected-network-nodes', 'data'),
 )
 def update_selected_rows(row_n_clicks, table,data):
+    """
+    Callback to update the list of selected network nodes.
+
+    Parameters:
+        - row_n_clicks: Number of clicks on network node rows.
+        - table: The children of the network nodes table.
+        - data: Currently selected network nodes.
+
+    Returns:
+        List: Updated list of selected network nodes.
+    """
     if ctx.triggered[0]['prop_id'] == '.':
         raise PreventUpdate
     index = None 
@@ -88,7 +107,7 @@ def update_selected_rows(row_n_clicks, table,data):
             data.remove(index)
     return data
 
-
+# Define the callback for updating network nodes table and pagination
 @app.callback(
     Output('network-nodes-table', 'children'),
     Output('network-nodes-table-pagination', 'max_value'),
@@ -109,6 +128,28 @@ def update_selected_rows(row_n_clicks, table,data):
     Input('clear-button', 'n_clicks'), 
 )
 def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks):
+    """
+    Callback to update the network nodes table and pagination.
+
+    Parameters:
+        - page: Active page number.
+        - page_size: Number of rows per page.
+        - geneid_filter1: Gene ID filter for the first dataset.
+        - list: List of gene IDs for filtering.
+        - upload_clicks: Number of clicks on the upload button.
+        - description_filter: Product description filter.
+        - geneid_filter2: Gene ID filter for the second dataset.
+        - geneid_filter3: Gene ID filter for the third dataset.
+        - TTAA_filter_slider: Range filter for the number of TTAA.
+        - mis_filter: Range filter for MIS values.
+        - ois_filter: Range filter for OIS values.
+        - bm_filter: Range filter for HMS values.
+        - selected_nodes: Currently selected network nodes.
+        - clear_clicks: Number of clicks on the clear button.
+
+    Returns:
+        Tuple: Updated network nodes table and maximum pagination value.
+    """
     page = int(page) - 1
 
     
@@ -172,6 +213,16 @@ def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,descri
     State({'type': 'net-node-table-tr', 'index': MATCH}, 'id'),
     Input('selected-network-nodes', 'data'), )
 def update_selected_rows_style(id, data):
+    """
+    Callback to update the style of selected rows in the network nodes table.
+
+    Parameters:
+        - id: Identifier of the selected row.
+        - data: Currently selected network nodes.
+
+    Returns:
+        Tuple: Style and class name for the selected row.
+    """
     if id['index'] in data:
         style = {"fontWeight": 'bold'}
         className = 'table-active'
@@ -187,6 +238,16 @@ def update_selected_rows_style(id, data):
     Input('selected-network-nodes', 'data'),
 )
 def update_igv_locus(table, selected_cells): 
+    """
+    Callback to update the IGV container based on selected network nodes.
+
+    Parameters:
+        - table: The children of the network nodes table.
+        - selected_cells: Currently selected network nodes.
+
+    Returns:
+        List: Updated IGV container children.
+    """
     trigger_id = ctx.triggered_id.split('.')[0]
     if trigger_id == 'network-nodes-table':
         raise PreventUpdate
@@ -246,6 +307,26 @@ def update_igv_locus(table, selected_cells):
     prevent_initial_call=True,
 ) 
 def reset_n_clicks(geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks):
+    """
+    Callback to reset the download button n_clicks.
+
+    Parameters:
+        - geneid_filter1: Gene ID filter for the first dataset.
+        - list: List of gene IDs for filtering.
+        - upload_clicks: Number of clicks on the upload button.
+        - description_filter: Product description filter.
+        - geneid_filter2: Gene ID filter for the second dataset.
+        - geneid_filter3: Gene ID filter for the third dataset.
+        - TTAA_filter_slider: Range filter for the number of TTAA.
+        - mis_filter: Range filter for MIS values.
+        - ois_filter: Range filter for OIS values.
+        - bm_filter: Range filter for HMS values.
+        - selected_nodes: Currently selected network nodes.
+        - clear_clicks: Number of clicks on the clear button.
+
+    Returns:
+        int or None: Reset n_clicks for the download button.
+    """
     return None
 
 @app.callback(
@@ -267,6 +348,27 @@ def reset_n_clicks(geneid_filter1,list,upload_clicks,description_filter, geneid_
     prevent_initial_call=True,
 )
 def update_download_button(n_clicks, geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks):
+   """
+    Callback to update the download button data.
+
+    Parameters:
+        - n_clicks: Number of clicks on the download button.
+        - geneid_filter1: Gene ID filter for the first dataset.
+        - list: List of gene IDs for filtering.
+        - upload_clicks: Number of clicks on the upload button.
+        - description_filter: Product description filter.
+        - geneid_filter2: Gene ID filter for the second dataset.
+        - geneid_filter3: Gene ID filter for the third dataset.
+        - TTAA_filter_slider: Range filter for the number of TTAA.
+        - mis_filter: Range filter for MIS values.
+        - ois_filter: Range filter for OIS values.
+        - bm_filter: Range filter for HMS values.
+        - selected_nodes: Currently selected network nodes.
+        - clear_clicks: Number of clicks on the clear button.
+
+    Returns:
+        dict or None: Download button data.
+    """
    if n_clicks is None:
       PreventUpdate
    if n_clicks is not None:
@@ -324,6 +426,18 @@ def update_download_button(n_clicks, geneid_filter1,list,upload_clicks,descripti
 
 
 def create_plot(df, selected_genes, y_column, title):
+    """
+    Create a plot for selected and unselected genes.
+
+    Parameters:
+        - df: DataFrame containing gene data.
+        - selected_genes: Name of the selected gene.
+        - y_column: Column to be plotted on the y-axis.
+        - title: Title of the plot.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: Plotly figure object.
+    """
     fig = go.Figure()
  # Create a mask to identify the selected genes
     selected_genes_mask = df['GeneIDPkH'] == selected_genes
@@ -363,6 +477,17 @@ def create_plot(df, selected_genes, y_column, title):
     return fig
 
 def orig_graph(df, y_column, title):
+     """
+    Create a scatter plot for original gene data.
+
+    Parameters:
+        - df: DataFrame containing gene data.
+        - y_column: Column to be plotted on the y-axis.
+        - title: Title of the plot.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: Plotly figure object.
+    """
      df['color'] = df['GeneIndex']
      fig1 = px.scatter(df, x='GeneIndex', y=y_column, color=y_column, color_continuous_scale=['blue', 'white', 'red'])
      fig1.update_layout(title=title)
@@ -379,6 +504,16 @@ def orig_graph(df, y_column, title):
     
 )
 def update_graph(selected_cells,table):
+    """
+    Callback to update the OIS graph based on selected cells in the network table.
+
+    Parameters:
+        - selected_cells: List of selected network nodes.
+        - table: Children of the network nodes table.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: Updated Plotly figure object.
+    """
     if not selected_cells:
      fig1 = orig_graph(df_OIS, 'OIS', 'OIS ')
     else:
@@ -397,6 +532,16 @@ def update_graph(selected_cells,table):
 )
 
 def update_graph2(selected_cells,table):
+    """
+    Callback to update the MIS graph based on selected cells in the network table.
+
+    Parameters:
+        - selected_cells: List of selected network nodes.
+        - table: Children of the network nodes table.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: Updated Plotly figure object.
+    """
     if not selected_cells:
      fig2 = orig_graph(df_MIS, 'MIS', 'MIS ')
     else:
@@ -416,6 +561,16 @@ def update_graph2(selected_cells,table):
 )
 
 def update_graph2(selected_cells,table):
+    """
+    Callback to update the HMS graph based on selected cells in the network table.
+
+    Parameters:
+        - selected_cells: List of selected network nodes.
+        - table: Children of the network nodes table.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: Updated Plotly figure object.
+    """
     if not selected_cells:
      fig3 = orig_graph(df_HMS, 'HMS', 'HMS')
     else:
@@ -434,6 +589,17 @@ def update_graph2(selected_cells,table):
     [State('upload-modal', 'is_open')]
 )
 def toggle_modal(open_clicks,upload_clicks,is_open):
+    """
+    Callback to toggle the upload modal.
+
+    Parameters:
+        - open_clicks: Number of clicks on the open modal button.
+        - upload_clicks: Number of clicks on the upload modal button.
+        - is_open: Current state of the upload modal.
+
+    Returns:
+        bool: Updated state of the upload modal.
+    """
     if open_clicks or upload_clicks :
         return not is_open
     return is_open
@@ -449,6 +615,19 @@ def toggle_modal(open_clicks,upload_clicks,is_open):
     prevent_initial_call=True,
 )
 def update_manual_entry_from_upload(contents, filename, copy_paste_value, upload_clicks,clear):
+    """
+    Callback to update the gene list from file upload or copy-paste.
+
+    Parameters:
+        - contents: Contents of the uploaded file.
+        - filename: Name of the uploaded file.
+        - copy_paste_value: Value from the copy-paste input field.
+        - upload_clicks: Number of clicks on the upload button.
+        - clear: Number of clicks on the clear button.
+
+    Returns:
+        str: Updated gene list for filtering.
+    """
     if upload_clicks is None:
         raise PreventUpdate
     
@@ -493,6 +672,15 @@ def update_manual_entry_from_upload(contents, filename, copy_paste_value, upload
     prevent_initial_call=True,  
 )
 def reset_n_clicks(n):
+    """
+    Callback to reset the 'Clear' button clicks.
+
+    Parameters:
+        - n: Number of clicks on the upload modal button.
+
+    Returns:
+        None: Resets the 'Clear' button clicks.
+    """
     return None
 
 @app.callback(
@@ -500,6 +688,15 @@ def reset_n_clicks(n):
    Input('clear-button', 'n_clicks'),
 )
 def clear_list(n):
+   """
+    Callback to clear the copy-paste gene list input.
+
+    Parameters:
+        - n: Number of clicks on the 'Clear' button.
+
+    Returns:
+        str: Empty string to clear the input field.
+    """
    if n :
       return ''
       
