@@ -22,7 +22,7 @@ path_ois = 'assets/OIS_sorted.xlsx'
 path_hms = 'assets/HMS_sorted.xlsx'
 path= 'assets/MIS_OIS_HMS_Pk_Pf_Pb_table_V3_OISMMISlike_rounded.xlsx'
 # Define the path for genome data in BED format
-path_bed = r'assets/Pk_5502transcript_modified.bed'
+path_bed = r'assets/Pk_5502transcript_864lncRNAtranscript_modified.bed'
 # Load genome data from the BED file
 gene_to_genome = genome_data(path_bed)
 # Extract genome names from the loaded genome data
@@ -30,9 +30,14 @@ genome_list = genome(gene_to_genome)
  
  # Load data from Excel files into Pandas DataFrames
 df_MIS = load_data(path_mis)
+df_MIS['MIS']=df_MIS['MIS'].round(3)
 df_OIS = load_data(path_ois)
+df_OIS['OIS']=df_OIS['OIS'].round(3)
 df_HMS = load_data(path_hms)
+df_HMS['HMS']=df_HMS['HMS'].round(3)
 data = load_data(path)
+columns_to_round = ['HMS', 'MIS', 'OIS']
+data[columns_to_round] = data[columns_to_round].round(3)
 
 # Define tracks for visualization in the IGV component
 tracks =[
@@ -46,11 +51,18 @@ tracks =[
                     'color': 'rgb(169,169,169)'
                 },
                 {
-                    'name': 'GTF track',
+                    'name': 'Coding Genes',
                     'url': app.get_asset_url('PlasmoDB-58_PknowlesiH.gtf'),
                     'displayMode': 'EXPANDED',
                     'height': 100,
                     'color': 'rgb(0,0,255)'
+                },
+                 {
+                    'name': 'lncRNA',
+                    'url': app.get_asset_url('PkH_RABT_guided_864lncRNA_2.gtf'),
+                    'displayMode': 'EXPANDED',
+                    'height': 100,
+                    'color': 'rgb(0,100,0)'
                 },
                 {
                     'name': 'TTAA Genome Pos',
@@ -63,14 +75,16 @@ tracks =[
 
 # Define columns for the data table
 table_columns = [
-    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
-    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '10%', 'minWidth': '100px'}, 'style': {'width': '20%', 'minWidth': '120px'}},
-    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
-    {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
-    {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
-    {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
-    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
-    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
+    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '15%', }},
+    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "ref_gene_id", "name": "lncRNA_refgene", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "class_code", "name": "lncRNA_class", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
 ]
 # Define the Dash app callback context
 ctx = callback_context
@@ -126,26 +140,30 @@ def update_selected_rows(row_n_clicks, table,data):
     Input('HMS-slider', 'value'),
     State('selected-network-nodes', 'data'),
     Input('clear-button', 'n_clicks'), 
+    Input('network-nodes-table-filter-ref_gene_id', 'value'),
+    Input('network-nodes-table-filter-class_code', 'value'),
 )
-def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks):
+def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks,gene_ref_id_filter,class_code_filter):
     """
     Callback to update the network nodes table and pagination.
 
     Parameters:
         - page: Active page number.
         - page_size: Number of rows per page.
-        - geneid_filter1: Gene ID filter for the first dataset.
+        - geneid_filter1: Gene ID filter for the first coloumn.
         - list: List of gene IDs for filtering.
         - upload_clicks: Number of clicks on the upload button.
         - description_filter: Product description filter.
-        - geneid_filter2: Gene ID filter for the second dataset.
-        - geneid_filter3: Gene ID filter for the third dataset.
+        - geneid_filter2: Gene ID filter for the 9th coloumn.
+        - geneid_filter3: Gene ID filter for the 10th coloumn.
         - TTAA_filter_slider: Range filter for the number of TTAA.
         - mis_filter: Range filter for MIS values.
         - ois_filter: Range filter for OIS values.
         - bm_filter: Range filter for HMS values.
         - selected_nodes: Currently selected network nodes.
         - clear_clicks: Number of clicks on the clear button.
+        - ref_gene_id_filter: filter for 4th coloumn.
+        - class_code_filter: filter for 5th coloumn.
 
     Returns:
         Tuple: Updated network nodes table and maximum pagination value.
@@ -180,6 +198,10 @@ def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,descri
       df = df.loc[df['GeneIDPf3D7'].str.lower().str.contains(geneid_filter2.lower(),na=False)]
     if geneid_filter3:
      df = df.loc[df['GeneIDPbANKA'].str.lower().str.contains(geneid_filter3.lower(),na=False)]
+    if gene_ref_id_filter:
+     df = df.loc[df['ref_gene_id'].str.lower().str.contains(geneid_filter3.lower(),na=False)]
+    if class_code_filter:
+     df = df.loc[df['class_code'].str.lower().str.contains(geneid_filter3.lower(),na=False)]
 
 
     data_slice = [{'index': i, 'GeneIDPkH': '', 'Product_Description': ''} for i in range(page * page_size, (page + 1) * page_size)]
@@ -450,9 +472,10 @@ def create_plot(df, selected_genes, y_column, title):
             y=unselected_genes_data[y_column],
             mode='markers',
             marker=dict(color=unselected_genes_data['GeneIndex'], colorscale=['blue', 'white', 'red'], size=10),
-            name='All Genes'
+            name="All Genes",
         )
     fig.add_trace(grey_plot)
+    fig.update_traces(showlegend=False)
 
     if selected_genes:
         red_plot = go.Scatter(

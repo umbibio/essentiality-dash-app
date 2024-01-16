@@ -11,7 +11,7 @@ def load_data(path):
   df= pd.DataFrame(d)
   return df
 
-path_bed = r'assets/Pk_5502transcript_modified.bed'
+path_bed = r'assets/Pk_5502transcript_864lncRNAtranscript_modified.bed'
 def genome_data(path_bed):
    """
     Read bed data from a file and create a mapping of gene names to genomic coordinates.

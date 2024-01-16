@@ -14,13 +14,11 @@ body = [
             dbc.CardBody(
                 dbc.Row([
                     dbc.Col(dcc.Markdown('''
-The Plasmodium Essentiality Database provides an interactive app to explore gene essentiality and fitness during the intra-erythrocytic development cycle from several Plasmodium species. 
+The Plasmodium Essentiality Database provides an interactive app to explore gene essentiality during the intra-erythrocytic development cycle from several Plasmodium species.
 To explore the data, click on one of the tabs above.
 
-1. Essentiality: Explore the essentiality of genes based on different mathematical model (MIS, OIS, HMS).
-2. Fitness: Explore the defective and advantageous fitness of the genes​.
-3. Non-coding RNAs: Explore the essentiality of non-coding RNAs across the genome of Plasmodium knowlesi​.
-4. Perturbation: Explore the essentiality of Plasmodium knowlesi genes under perturbation​.                                        
+1. Essentiality: To explore the essentiality of protein-coding genes as well as identified lncRNAs based on different mathematical models (MIS, OIS, HMS). IGV spot check is allowed for any selection.
+2. Perturbation: To explore the change of essentiality of Plasmodium knowlesi genes under different perturbations.                                         
 
 ''')),
 ])),

@@ -47,6 +47,8 @@ filter_inputs = {
         # dbc.Input(id='network-nodes-table-filter-No_of_TTAA', placeholder='Filter ...',  size='sm', style={'width': '50px'})
     ],
     'MIS': make_filter_popover('MIS', data_name['MIS'], step_value),
+    'ref_gene_id': dbc.Input(id='network-nodes-table-filter-ref_gene_id', placeholder='Filter ...', size='sm'),
+    'class_code': dbc.Input(id='network-nodes-table-filter-class_code', placeholder='Filter ...', size='sm'),
     'OIS': make_filter_popover('OIS', data_name['OIS'], step_value),
     'HMS': make_filter_popover('HMS', data_name['HMS'], step_value),
     'GeneIDPf3D7': dbc.Input(id='network-nodes-table-filter-GeneIDPf3D7', placeholder='Filter ...', size='sm'),
@@ -55,17 +57,19 @@ filter_inputs = {
 
 # Define table columns
 table_columns = [
-    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
-    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '10%', 'minWidth': '100px'}, 'style': {'width': '20%', 'minWidth': '120px'}},
-    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '10%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
-    {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
-    {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
-    {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '5%', 'minWidth': '120px'}},
-    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
-    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', 'minWidth': '120px'}, 'style': {'width': '10%', 'minWidth': '120px'}},
+    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '15%', }},
+    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "ref_gene_id", "name": "lncRNA_refgene", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "class_code", "name": "lncRNA_class", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
 ]
 # Define the path for the BED file
-path_bed = r'assets/Pk_5502transcript_modified.bed'
+path_bed = r'assets/Pk_5502transcript_864lncRNAtranscript_modified.bed'
 # Load data and create genome information
 gene_to_genome = genome_data(path_bed)
 genome_list = genome(gene_to_genome)
@@ -81,11 +85,18 @@ tracks =[
                     'color': 'rgb(169,169,169)'
                 },
                 {
-                    'name': 'GTF track',
+                    'name': 'Coding Genes',
                     'url': app.get_asset_url('PlasmoDB-58_PknowlesiH.gtf'),
                     'displayMode': 'EXPANDED',
                     'height': 100,
                     'color': 'rgb(0,0,255)'
+                },
+                {
+                    'name': 'lncRNA',
+                    'url': app.get_asset_url('PkH_RABT_guided_864lncRNA_2.gtf'),
+                    'displayMode': 'EXPANDED',
+                    'height': 100,
+                    'color': 'rgb(0,100,0)'
                 },
                 {
                     'name': 'TTAA Genome Pos',

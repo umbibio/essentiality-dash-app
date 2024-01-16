@@ -33,7 +33,7 @@ for page in page_info_list:
 # Create navigation links based on page information
 nav = dbc.Nav([
     dbc.NavItem(dbc.NavLink(page['title'], href=page['href'], id={'type': 'navlink', 'page': page['module']}))
-    for page in page_info_list ], pills=True)
+    for page in page_info_list ], pills=True,style={'fontWeight': 'bold', 'fontSize': 20},)
 #Create a logo using the app's asset
 logo = html.Img(src=app.get_asset_url('logo_sida.png'), className="img-fluid")
 #  set up the overall layout
@@ -43,9 +43,15 @@ app.layout = dbc.Container(
         # html.Datalist(id='list-suggested-gene-ids', children=[html.Option(value=word) for word in descriptions.ID]),
         # dcc.Store(id='expression-color-scale-store', storage_type='local'),
         dbc.Col([
-          dbc.Row(dbc.Col(logo, width=10)),
+          dbc.Row([
+              dbc.Col(logo, width=3),
+              dbc.Col([
+                  html.Br(),
+                  html.Br(),
+                  html.H1([html.Span("P", style={'color': 'red'}),html.Span("lasmodium "),html.Span("E", style={'color': 'red'}),html.Span("ssentiality "),html.Span("D", style={'color': 'red'}),html.Span("atabase")],style={'fontFamily': 'Arial', 'fontWeight': 'bold', 'fontSize': 45})], width=9),]),
             dbc.Row(dbc.Col(id='left-menu')),
-        ], width=2),
+        ], width=10),
+        html.Hr(),
         dbc.Col([
             dbc.Row(dbc.Col(nav), class_name="p-2"),
             dbc.Row(dbc.Col(id='page-content'), class_name='mt-4'),
