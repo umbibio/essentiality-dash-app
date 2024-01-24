@@ -471,7 +471,7 @@ def create_plot(df, selected_genes, y_column, title):
             x=unselected_genes_data['GeneIndex'],
             y=unselected_genes_data[y_column],
             mode='markers',
-            marker=dict(color=unselected_genes_data['GeneIndex'], colorscale=['blue', 'white', 'red'], size=10),
+            marker=dict(color=unselected_genes_data['GeneIndex'], colorscale=['red', 'white', 'blue'], size=10),
             name="All Genes",
         )
     fig.add_trace(grey_plot)
@@ -512,7 +512,7 @@ def orig_graph(df, y_column, title):
         plotly.graph_objs._figure.Figure: Plotly figure object.
     """
      df['color'] = df['GeneIndex']
-     fig1 = px.scatter(df, x='GeneIndex', y=y_column, color=y_column, color_continuous_scale=['blue', 'white', 'red'])
+     fig1 = px.scatter(df, x='GeneIndex', y=y_column, color=y_column, color_continuous_scale=['red', 'white', 'blue'])
      fig1.update_layout(title=title)
      fig1.update_layout(xaxis_title="Rank-Ordered Genes")
      fig1.update_layout( plot_bgcolor='white')
