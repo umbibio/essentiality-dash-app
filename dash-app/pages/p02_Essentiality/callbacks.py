@@ -199,9 +199,9 @@ def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,descri
     if geneid_filter3:
      df = df.loc[df['GeneIDPbANKA'].str.lower().str.contains(geneid_filter3.lower(),na=False)]
     if gene_ref_id_filter:
-     df = df.loc[df['ref_gene_id'].str.lower().str.contains(geneid_filter3.lower(),na=False)]
+     df = df.loc[df['ref_gene_id'].str.lower().str.contains(gene_ref_id_filter.lower(),na=False)]
     if class_code_filter:
-     df = df.loc[df['class_code'].str.lower().str.contains(geneid_filter3.lower(),na=False)]
+     df = df.loc[df['class_code'].str.lower().str.contains(class_code_filter.lower(),na=False)]
 
 
     data_slice = [{'index': i, 'GeneIDPkH': '', 'Product_Description': ''} for i in range(page * page_size, (page + 1) * page_size)]
@@ -315,7 +315,7 @@ def update_igv_locus(table, selected_cells):
     Output('download-button', 'n_clicks'),
     Input('network-nodes-table-filter-GeneIDPkH', 'value'),
     Input('gene-list-store','data'),
-    Input('upload-modal-button', 'n_clicks'),
+   Input('upload-modal-button', 'n_clicks'),
     Input('network-nodes-table-filter-Product_Description', 'value'),
     Input('network-nodes-table-filter-GeneIDPf3D7', 'value'),
     Input('network-nodes-table-filter-GeneIDPbANKA', 'value'),
@@ -326,9 +326,12 @@ def update_igv_locus(table, selected_cells):
     Input('HMS-slider', 'value'),
     State('selected-network-nodes', 'data'),
     Input('clear-button', 'n_clicks'), 
+    Input('network-nodes-table-filter-ref_gene_id', 'value'),
+    Input('network-nodes-table-filter-class_code', 'value'),
+
     prevent_initial_call=True,
 ) 
-def reset_n_clicks(geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks):
+def reset_n_clicks(geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks,gene_ref_id_filter,class_code_filter):
     """
     Callback to reset the download button n_clicks.
 
@@ -356,7 +359,7 @@ def reset_n_clicks(geneid_filter1,list,upload_clicks,description_filter, geneid_
     Input('download-button', 'n_clicks'),
     Input('network-nodes-table-filter-GeneIDPkH', 'value'),
     Input('gene-list-store','data'),
-    Input('upload-modal-button', 'n_clicks'),
+   Input('upload-modal-button', 'n_clicks'),
     Input('network-nodes-table-filter-Product_Description', 'value'),
     Input('network-nodes-table-filter-GeneIDPf3D7', 'value'),
     Input('network-nodes-table-filter-GeneIDPbANKA', 'value'),
@@ -367,9 +370,11 @@ def reset_n_clicks(geneid_filter1,list,upload_clicks,description_filter, geneid_
     Input('HMS-slider', 'value'),
     State('selected-network-nodes', 'data'),
     Input('clear-button', 'n_clicks'), 
+    Input('network-nodes-table-filter-ref_gene_id', 'value'),
+    Input('network-nodes-table-filter-class_code', 'value'),
     prevent_initial_call=True,
 )
-def update_download_button(n_clicks, geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks):
+def update_download_button(n_clicks, geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks,gene_ref_id_filter,class_code_filter):
    """
     Callback to update the download button data.
 
@@ -441,6 +446,14 @@ def update_download_button(n_clicks, geneid_filter1,list,upload_clicks,descripti
      df = df.loc[df['GeneIDPbANKA'].str.lower().str.contains(geneid_filter3.lower(),na=False)]
      csv_string = df.to_csv(index=False, encoding='utf-8')
      return dict(content=csv_string, filename=f"{(geneid_filter3)}_table.csv")
+    if gene_ref_id_filter:
+     df = df.loc[df['ref_gene_id'].str.lower().str.contains(gene_ref_id_filter.lower(),na=False)]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"{(gene_ref_id_filter)}_table.csv")
+    if class_code_filter:
+     df = df.loc[df['class_code'].str.lower().str.contains(class_code_filter.lower(),na=False)]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"{(class_code_filter)}_table.csv")
     else:
      csv_string = df.to_csv(index=False, encoding='utf-8')
      return dict(content=csv_string, filename=f"datatable.csv")
