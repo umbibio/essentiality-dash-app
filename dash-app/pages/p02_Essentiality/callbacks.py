@@ -176,12 +176,12 @@ def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,descri
         df = data.copy()
     if geneid_filter1 or upload_clicks and not clear_clicks:
         if geneid_filter1 :
-           df = df.loc[df['GeneIDPkH'].str.lower().str.contains(geneid_filter1.lower())]
+           df = df.loc[df['GeneIDPkH'].str.lower().str.contains(geneid_filter1.lower(),na=False)]
         if upload_clicks:
          gene_ids_list = list.split(',')
          df = df.loc[df['GeneIDPkH'].str.lower().isin([gene_id.lower() for gene_id in gene_ids_list])]
     if description_filter:
-     df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower())]
+     df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower(),na=False)]
     if TTAA_filter_slider :
      if TTAA_filter_slider :
       df = df.loc[(df['No_of_TTAA'] >= TTAA_filter_slider[0]) & (df['No_of_TTAA'] <= TTAA_filter_slider[1])]
@@ -484,7 +484,7 @@ def create_plot(df, selected_genes, y_column, title):
             x=unselected_genes_data['GeneIndex'],
             y=unselected_genes_data[y_column],
             mode='markers',
-            marker=dict(color=unselected_genes_data['GeneIndex'], colorscale=['red', 'white', 'blue'], size=10),
+            marker=dict(color=unselected_genes_data['GeneIndex'], colorscale=[(0, "red"), (0.5, "white"), (1, "blue")], size=10),
             name="All Genes",
         )
     fig.add_trace(grey_plot)
@@ -525,7 +525,7 @@ def orig_graph(df, y_column, title):
         plotly.graph_objs._figure.Figure: Plotly figure object.
     """
      df['color'] = df['GeneIndex']
-     fig1 = px.scatter(df, x='GeneIndex', y=y_column, color=y_column, color_continuous_scale=['red', 'white', 'blue'])
+     fig1 = px.scatter(df, x='GeneIndex', y=y_column, color=y_column, color_continuous_scale=[(0, "red"), (0.5, "white"), (1, "blue")])
      fig1.update_layout(title=title)
      fig1.update_layout(xaxis_title="Rank-Ordered Genes")
      fig1.update_layout( plot_bgcolor='white')
@@ -678,9 +678,9 @@ def update_manual_entry_from_upload(contents, filename, copy_paste_value, upload
 
         try:
             if file_extension.lower() == '.csv':
-                df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
+                df = pd.read_csv(io.StringIO(decoded.decode('utf-8'), observed=False))
             elif file_extension.lower() == '.txt':
-                df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None, delimiter=',')
+                df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None, delimiter=',', observed=False)
 
                 if df.shape[1] == 1:
                     # If there's only one column, use its values as the filter value
