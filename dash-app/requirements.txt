@@ -8,3 +8,4 @@ gunicorn
 bibtexparser
 plotly
 dash_bio
+re 

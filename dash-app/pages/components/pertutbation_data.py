@@ -1,18 +1,8 @@
-from itertools import count
+
 import pandas as pd
 import numpy as np
 from app import app 
-import plotly.graph_objs as go
 import plotly.express as px
-from plotly.subplots import make_subplots
-import matplotlib.pyplot as plt
-from matplotlib.text import Annotation
-from matplotlib.patches import FancyBboxPatch
-from matplotlib.lines import Line2D
-from scipy.stats import gaussian_kde
-from plotnine import *
-import seaborn as sns
-from plotnine import ggplot, aes, geom_point
 import re
 
 
@@ -200,8 +190,7 @@ fig2.update_layout(title_text=f'Site level log2FC model',
 ##Trending plot 
 
 GNF_megatable = pd.read_excel('assets/GNF_megatable.xlsx')
-DHA_megatable = pd.read_excel('assets/DHA_megatable.xlsx')
-LF_megatable = pd.read_excel('assets/LF_megatable.xlsx')
+
 
 def extract_day(time_str):
     return re.sub(r'day', '', time_str)

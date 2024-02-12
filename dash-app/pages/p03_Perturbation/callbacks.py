@@ -1,19 +1,15 @@
-import re
+
 from dash import Dash, html, dcc, callback, Input, Output, State,ALL,MATCH
-import plotly.graph_objs as go
-import dash_bio as dashbio
 import plotly.express as px
-from dash import callback_context 
 from app import app 
 import pandas as pd
 import os
 import base64
 import io
 import numpy as np
-import json
 import pages.components.pertutbation_data  as pdata
 from dash.exceptions import PreventUpdate
-from plotnine import ggplot, aes, geom_line, geom_point, theme_bw, facet_wrap, element_rect, labs,theme
+
 
 
 @app.callback(

@@ -106,18 +106,18 @@ def display_page(pathname):
     return None, None
 
 # Entry point for running the app
-# if __name__ == '__main__':
-#     import argparse
-
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument('--host', type=str, default='127.0.0.1')
-#     parser.add_argument('--port', type=int, default=8080)
-#     parser.add_argument('--debug', action='store_true')
-    
-#     kvargs = vars(parser.parse_args())
-
-#  # Run the Dash app with specified arguments
-#     app.run_server(**kvargs)
-
 if __name__ == '__main__':
-     app.run(debug=True)
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--host', type=str, default='127.0.0.1')
+    parser.add_argument('--port', type=int, default=8080)
+    parser.add_argument('--debug', action='store_true')
+    
+    kvargs = vars(parser.parse_args())
+
+ # Run the Dash app with specified arguments
+    app.run_server(**kvargs)
+
+# if __name__ == '__main__':
+#      app.run(debug=True)
