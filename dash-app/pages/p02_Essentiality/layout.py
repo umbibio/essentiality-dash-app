@@ -57,16 +57,16 @@ filter_inputs = {
 
 # Define table columns
 table_columns = [
-    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
-    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '15%', }},
+    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "ref_gene_id", "name": "lncRNA_refgene", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
-    {"id": "class_code", "name": "lncRNA_class", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "ref_gene_id", "name": "lncRNA_refgene", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "class_code", "name": "lncRNA_class", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
-    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
 ]
 # Define the path for the BED file
 path_bed = r'assets/Pk_5502transcript_864lncRNAtranscript_modified.bed'
@@ -122,7 +122,7 @@ body = [
                 dbc.Row(dbc.Col(
                     dbc.Table([
                        html.Thead([
-                           html.Tr([html.Th(col['name'], style=col['header_style']) for col in table_columns]),
+                           html.Tr([html.Th(col['name'], style={**col['header_style'],'max-width':'400px'}) for col in table_columns]),
                            html.Tr([
                          html.Th(
                                 filter_inputs[col['id']]
@@ -133,7 +133,7 @@ body = [
 
                         ],
                     id='network-nodes-table-header',
-                    class_name='mb-0'),
+                    class_name='mb-0 overflow-hidden' ),
                 )),
                 dbc.Row(dbc.Col(
                     dbc.Spinner([
@@ -201,7 +201,7 @@ body = [
     html.Br(),
     html.Br(),
     # dbc.Card(dcc.Loading(id='igv-container')),
-      dbc.Card(
+      dbc.Card( dbc.CardBody(
         id='igv-container',
         children=[
             dashbio.Igv(
@@ -214,10 +214,11 @@ body = [
                     'tracks': tracks
                 }
             )
-        ]
+        ] ,
+      ) ,class_name="mb-3",
     ),
     html.Br(),
-    dbc.Row([dbc.Col(dbc.Card(scatter_plot2())),
-    dbc.Col(dbc.Card(scatter_plot())),
-    dbc.Col(dbc.Card(scatter_plot3()))]) 
+        dbc.Row([dbc.Col(dbc.Card(scatter_plot2()),class_name="mb-3"),
+    dbc.Col(dbc.Card(scatter_plot()),class_name="mb-3",),
+    dbc.Col(dbc.Card(scatter_plot3())),],class_name="mb-3",) 
 ]

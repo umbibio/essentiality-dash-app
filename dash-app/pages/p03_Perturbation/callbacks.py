@@ -18,7 +18,7 @@ Output("trending-plot",'figure'),
 )
 def update_trending_plot(geneName):
     df_plot=pdata.trending_plot(pdata.GNF_megatable,geneName)
-    print(df_plot.head(10))
+  
     # Create a line plot with points using Plotly Express
     fig = px.line(df_plot, x='Time', y='logFC_edgeR', color='cond', facet_col='geneID',
               color_discrete_sequence=px.colors.qualitative.Set1, markers=True)
@@ -79,7 +79,7 @@ def clear_list(n):
     Returns:
         str: Empty string to clear the input field.
     """
-   print("triggered")
+  
    if n :
       return ''
    
@@ -100,13 +100,12 @@ def toggle_modal(open_clicks,upload_clicks,is_open):
     Returns:
         bool: Updated state of the upload modal.
     """
-    print("triggered1")
+   
     if open_clicks or upload_clicks :
-     print("open: " + str(open_clicks), "upload: " + str(upload_clicks))
+   
 
      return not is_open
-     print(is_open)
-    print(is_open)
+  
     return is_open
 
 @app.callback(
@@ -133,7 +132,7 @@ def update_manual_entry_from_upload(contents, filename, copy_paste_value, upload
     Returns:
         str: Updated gene list for filtering.
     """
-    print("triggered2")
+   
     if upload_clicks is None:
         raise PreventUpdate
     
@@ -161,16 +160,16 @@ def update_manual_entry_from_upload(contents, filename, copy_paste_value, upload
                     filter_value = ','.join(df.iloc[0].astype(str).tolist())
             else:
                 raise Exception('Unsupported file format')
-            print(filter_value.split(','))
+           
 
             return filter_value.split(',')
             
 
         except Exception as e:
-            print(f"Error in update_manual_entry_from_upload: {e}")
+            
             return ''
     elif copy_paste_value and upload_clicks and not clear:
-        print([value.strip() for value in copy_paste_value.split(",")])
+      
         return [value.strip() for value in copy_paste_value.split(",")]
         
     else:

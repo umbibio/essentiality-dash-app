@@ -75,16 +75,16 @@ tracks =[
 
 # Define columns for the data table
 table_columns = [
-    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
-    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '15%', }},
+    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "ref_gene_id", "name": "lncRNA_refgene", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
-    {"id": "class_code", "name": "lncRNA_class", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "ref_gene_id", "name": "lncRNA_refgene", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "class_code", "name": "lncRNA_class", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
-    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
 ]
 # Define the Dash app callback context
 ctx = callback_context
@@ -563,8 +563,7 @@ def update_graph(selected_cells,table):
 @app.callback(
     Output('indicator-graphic2', 'figure'),
     Input('selected-network-nodes', 'data'),
-    Input('network-nodes-table', 'children'),
-    
+    Input('network-nodes-table', 'children'),    
 )
 
 def update_graph2(selected_cells,table):
