@@ -23,7 +23,7 @@ app = Dash(
     external_stylesheets=external_stylesheets,
     url_base_pathname=url_base_pathname,
     suppress_callback_exceptions=True,
-    title='Plasmodium Essentiality Database', update_title='Loading...')
+    title='Plasmodium Knowlesi Essentiality Database', update_title='Loading...')
 
 # Access the underlying Flask server instance , used for deployment
 server = app.server

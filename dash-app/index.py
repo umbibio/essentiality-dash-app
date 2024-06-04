@@ -48,7 +48,7 @@ app.layout = dbc.Container(
               dbc.Col([
                   html.Br(),
                   html.Br(),
-                  html.H1([html.Span("P", style={'color': 'red'}),html.Span("lasmodium "),html.Span("E", style={'color': 'red'}),html.Span("ssentiality "),html.Span("D", style={'color': 'red'}),html.Span("atabase")],style={'fontFamily': 'Arial', 'fontWeight': 'bold', 'fontSize': 45})], width=9),]),
+                  html.H1([html.Span("P", style={'color': 'red'}),html.Span("lasmodium "),html.Span("K", style={'color': 'red'}),html.Span("nowlesi "),html.Span("E", style={'color': 'red'}),html.Span("ssentiality "),html.Span("D", style={'color': 'red'}),html.Span("atabase")],style={'fontFamily': 'Arial', 'fontWeight': 'bold', 'fontSize': 30})], width=9),]),
             dbc.Row(dbc.Col(id='left-menu')),
         ], width=10),
         html.Hr(),
