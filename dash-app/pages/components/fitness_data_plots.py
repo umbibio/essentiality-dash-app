@@ -125,7 +125,6 @@ min_MFS = regression_results2['MFS_bottom_line'].min()
 Input_gene_list =  ["PKNH_0503200", "PKNH_0000200", "PKNH_0000700"]
 
 def trendingPlot(input_gene_list):
-    print(input_gene_list)
     figures = []
     for geneName in input_gene_list:
         # Input_gene_list1 = [gene for gene in Input_gene_list if gene == geneName]
@@ -177,5 +176,4 @@ def trendingPlot(input_gene_list):
             font=dict(size=14)
         )
         figures.append(fig2)
-        print(f"Fig generated for :{geneName}")
     return figures

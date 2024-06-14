@@ -72,27 +72,7 @@ fig.add_hline(y=yintercept_cutoff[0.97], line_width=3, line_dash="dash", line_co
 # Add vertical lines
 fig.add_vline(x=xintercept_cutoff[0.03], line_width=3, line_dash="dash", line_color="red")
 fig.add_vline(x=xintercept_cutoff[0.97], line_width=3, line_dash="dash", line_color="red")
-# Add density contours
-# fig.add_trace(go.Histogram2dContour(x=tmp['A_cv'], y=tmp['B_cv'], 
-                                    
-#                                       # Set opacity to 0 for no color fill
-#                                     line=dict(color='grey'),  # Set contour line color to grey
-#                                     contours=dict(start=0, end=custom_breaks[-1], size=len(custom_breaks))))
 
-# Add text labels
-# fig.add_trace(go.Scatter(x=tmp[tmp['geneID'].isin(up_gene['geneID'])]['A_cv'],
-#                          y=tmp[tmp['geneID'].isin(up_gene['geneID'])]['B_cv'],
-#                          mode='text',
-#                          text=tmp[tmp['geneID'].isin(up_gene['geneID'])]['geneID'],
-#                          textposition='bottom right',
-#                          textfont=dict(color='red', size=8)))
-
-# fig.add_trace(go.Scatter(x=tmp[tmp['geneID'].isin(down_gene['geneID'])]['A_cv'],
-#                          y=tmp[tmp['geneID'].isin(down_gene['geneID'])]['B_cv'],
-#                          mode='text',
-#                          text=tmp[tmp['geneID'].isin(down_gene['geneID'])]['geneID'],
-#                          textposition='top left',
-#                          textfont=dict(color='blue', size=8)))
 # Update layout
 fig.update_layout(title_text=f'CV inverse model',
                    title_x=0.5,
@@ -201,7 +181,6 @@ def trending_plot(Drug_megatable,geneName):
     
     # Select columns containing "_logFC" in their names
     df = megatable.filter(like='_logFC')
-    print(df.head(10))
     # Select columns containing "mean_log2_FC_sites" in their names
     df2 = megatable.filter(like='mean_log2_FC_sites')
     
@@ -233,3 +212,171 @@ def trending_plot(Drug_megatable,geneName):
     df_plot['cond'] = pd.Categorical(df_plot['cond'], categories=df_plot['cond'].unique())
     
     return df_plot
+
+
+
+# DHA 
+setA_DHA = 'SetA_DHA_High_day15'
+setB_DHA='SetB_DHA_High_day15'
+# Step 1: Read Data
+setA_file_DHA = pd.read_excel('assets/VC_SetA_DHA_High_day9_VS_WT_SetA_day20.xlsx')
+setA_file_DHA = setA_file_DHA.iloc[:, [0, 1, 5]]
+setA_file_DHA.columns = ["geneID", "A_mean_FC_sites", "A_cv"]
+
+setB_file_DHA = pd.read_excel('assets/VC_SetB_DHA_High_day15_VS_WT_SetB_day18.xlsx')
+setB_file_DHA = setB_file_DHA.iloc[:, [0, 1, 5]]
+setB_file_DHA.columns = ["geneID", "B_mean_FC_sites", "B_cv"]
+
+# Inner Join
+tmp_DHA = pd.merge(setA_file_DHA, setB_file_DHA, on="geneID", how="inner").dropna()
+
+
+setA_file2_DHA = pd.read_excel('assets/DIG_SetA_DHA_High_day9_VS_WT_SetA_day20.xlsx')
+setA_file2_DHA = setA_file2_DHA.iloc[:, [0, 1, 7]]
+setA_file2_DHA.columns = ["geneID", "setA_log2FC_edgeR", "setA_minus_log10FDR"]
+
+setB_file2_DHA = pd.read_excel('assets/DIG_SetB_DHA_High_day15_VS_WT_SetB_day18.xlsx')
+setB_file2_DHA = setB_file2_DHA.iloc[:, [0, 1, 7]]
+setB_file2_DHA.columns = ["geneID", "setB_log2FC_edgeR", "setB_minus_log10FDR"]
+
+tmp2_DHA = pd.merge(setA_file2_DHA, setB_file2_DHA, on="geneID", how="inner")
+
+# Full Join
+tmp_DHA = pd.merge(tmp_DHA, tmp2_DHA, on="geneID", how="outer").dropna()
+
+# Step 4: Calculate Maximum log2FC
+tmp_DHA['max.log2FC.edgeR'] = tmp_DHA.apply(lambda row: row['setA_log2FC_edgeR'] if abs(row['setA_log2FC_edgeR']) > abs(row['setB_log2FC_edgeR']) else row['setB_log2FC_edgeR'], axis=1)
+# Step 5: Calculate log2 Mean FC
+tmp_DHA['setA_log2_mean_FC_sites'] = np.log2(tmp_DHA['A_mean_FC_sites'])
+tmp_DHA['setB_log2_mean_FC_sites'] = np.log2(tmp_DHA['B_mean_FC_sites'])
+
+# Step 6: Calculate Midpoint and Quantiles
+mid_value_DHA = np.mean(tmp_DHA['max.log2FC.edgeR'])
+xintercept_cutoff_DHA = tmp_DHA["A_cv"].quantile([0.03, 0.97])
+yintercept_cutoff_DHA = tmp_DHA["B_cv"].quantile([0.03, 0.97])
+
+# Step 7: Filter Genes based on CV values
+up_gene_DHA = tmp_DHA[(tmp_DHA["A_cv"] >= xintercept_cutoff_DHA[0.97]) & (tmp_DHA["B_cv"] >= yintercept_cutoff_DHA[0.97])]
+down_gene_DHA = tmp_DHA[(tmp_DHA["A_cv"] <= xintercept_cutoff_DHA[0.03]) & (tmp_DHA["B_cv"] <= yintercept_cutoff_DHA[0.03])]
+
+# Add 'Change' column
+up_gene_DHA['Change'] = 'Increase'
+down_gene_DHA['Change'] = 'Decrease'
+
+# Step 8: Combine DataFrames
+up_down_gene_list_DHA = pd.concat([up_gene_DHA, down_gene_DHA], ignore_index=True)
+
+
+
+# plot 
+custom_breaks=(0.2,0.4,0.6,0.8)
+
+# Create scatter plot
+fig_DHA = px.scatter(tmp_DHA, x='A_cv', y='B_cv', color='max.log2FC.edgeR',
+                 color_continuous_scale=['darkblue', 'white', 'red'], hover_data=['geneID'])
+
+# Add horizontal lines
+fig_DHA.add_hline(y=yintercept_cutoff_DHA[0.03], line_width=3, line_dash="dash", line_color="red")
+fig_DHA.add_hline(y=yintercept_cutoff_DHA[0.97], line_width=3, line_dash="dash", line_color="red")
+
+# Add vertical lines
+fig_DHA.add_vline(x=xintercept_cutoff_DHA[0.03], line_width=3, line_dash="dash", line_color="red")
+fig_DHA.add_vline(x=xintercept_cutoff_DHA[0.97], line_width=3, line_dash="dash", line_color="red")
+
+# Update layout
+fig_DHA.update_layout(title_text=f'CV inverse model',
+                   title_x=0.5,
+                  xaxis_title=f'{setA}_cv_inverse', yaxis_title=f'{setB}_cv_inverse',
+                  showlegend=False,
+                  plot_bgcolor='white')
+
+
+
+xintercept_cutoff_edgeR_DHA = tmp_DHA["setA_log2FC_edgeR"].quantile([0.02, 0.98])
+yintercept_cutoff_edgeR_DHA= tmp_DHA["setB_log2FC_edgeR"].quantile([0.02, 0.98])
+
+
+
+
+# Filter data based on quantiles
+up_gene_edgeR_DHA = tmp_DHA[(tmp_DHA['setA_log2FC_edgeR'] >= xintercept_cutoff_edgeR_DHA[0.98]) & (tmp_DHA['setB_log2FC_edgeR'] >= yintercept_cutoff_edgeR_DHA[0.98])]
+
+down_gene_edgeR_DHA =tmp_DHA[(tmp_DHA['setA_log2FC_edgeR'] >= xintercept_cutoff_edgeR_DHA[0.02]) & (tmp_DHA['setB_log2FC_edgeR'] >= yintercept_cutoff_edgeR_DHA[0.02])]
+
+# Add 'Change' column
+up_gene_edgeR_DHA['Change'] = 'Increase'
+down_gene_edgeR_DHA['Change'] = 'Decrease'
+
+
+# Step 8: Combine DataFrames
+up_down_gene_list_edgeR_DHA = pd.concat([up_gene_edgeR_DHA, down_gene_edgeR_DHA], ignore_index=True)
+
+tmp_DHA['color'] = [
+    "darkblue" if x <= xintercept_cutoff_edgeR_DHA[0.02] and y <= yintercept_cutoff_edgeR_DHA[0.02] else  # below both lines
+    "red" if x >= xintercept_cutoff_edgeR_DHA[0.98] and y >= yintercept_cutoff_edgeR_DHA[0.98] else  # above both lines
+    "grey"  # in between the lines
+    for x, y in zip(tmp_DHA['setA_log2FC_edgeR'], tmp_DHA['setB_log2FC_edgeR'])
+]
+fig1_DHA = px.scatter(tmp_DHA, x='setA_log2FC_edgeR', y='setB_log2FC_edgeR', hover_data=['geneID'],color='color',color_discrete_map={"darkblue": "darkblue", "red": "red", "grey": "grey"}
+                 )
+
+# Add horizontal lines
+fig1_DHA.add_hline(y=yintercept_cutoff_edgeR_DHA[0.02], line_width=3, line_dash="dash", line_color="purple")
+fig1_DHA.add_hline(y=yintercept_cutoff_edgeR_DHA[0.98], line_width=3, line_dash="dash", line_color="purple")
+# Add vertical lines
+fig1_DHA.add_vline(x=xintercept_cutoff_edgeR_DHA[0.02], line_width=3, line_dash="dash", line_color="purple")
+fig1_DHA.add_vline(x=xintercept_cutoff_edgeR_DHA[0.98], line_width=3, line_dash="dash", line_color="purple")
+# Update layout
+fig1_DHA.update_layout(title_text=f'Gene level log2FC model by edgeR',
+                   title_x=0.5,
+                  xaxis_title=f'{setA}_edgeR_log2FC', yaxis_title=f'{setB}_edgeR_log2FC',
+                  showlegend=False,
+                  plot_bgcolor='white')
+
+xintercept_cutoff_cv_DHA = tmp_DHA["setA_log2_mean_FC_sites"].quantile([0.02, 0.98])
+yintercept_cutoff_cv_DHA = tmp_DHA["setB_log2_mean_FC_sites"].quantile([0.02, 0.98])
+
+# Filter data based on quantiles
+up_gene_cv_DHA = tmp_DHA[(tmp_DHA['setA_log2_mean_FC_sites'] >= xintercept_cutoff_cv_DHA[0.98]) & (tmp_DHA['setB_log2_mean_FC_sites'] >= yintercept_cutoff_cv_DHA[0.98])]
+
+down_gene_cv_DHA =tmp_DHA[(tmp_DHA['setA_log2_mean_FC_sites'] >= xintercept_cutoff_cv_DHA[0.02]) & (tmp_DHA['setB_log2_mean_FC_sites'] >= yintercept_cutoff_cv_DHA[0.02])]
+
+# Add 'Change' column
+up_gene_cv_DHA['Change'] = 'Increase'
+down_gene_cv_DHA['Change'] = 'Decrease'
+
+
+# Step 8: Combine DataFrames
+up_down_gene_list_cv_DHA = pd.concat([up_gene_cv_DHA, down_gene_cv_DHA], ignore_index=True)
+
+
+# Apply the function to create a 'color' column in your DataFrame
+
+tmp_DHA['color'] = [
+    "darkblue" if x <= xintercept_cutoff_cv_DHA[0.02] and y <= yintercept_cutoff_cv_DHA[0.02] else  # below both lines
+    "red" if x >= xintercept_cutoff_cv_DHA[0.98] and y >= yintercept_cutoff_cv_DHA[0.98] else  # above both lines
+    "grey"  # in between the lines
+    for x, y in zip(tmp_DHA['setA_log2_mean_FC_sites'], tmp_DHA['setB_log2_mean_FC_sites'])
+]
+
+# Create scatter plot
+fig2_DHA = px.scatter(tmp_DHA, x='setA_log2_mean_FC_sites', y='setB_log2_mean_FC_sites',
+                  hover_data=['geneID'], color='color',color_discrete_map={"darkblue": "darkblue", "red": "red", "grey": "grey"})
+
+# Add horizontal lines
+fig2_DHA.add_hline(y=yintercept_cutoff_cv_DHA[0.02], line_width=3, line_dash="dash", line_color="purple")
+fig2_DHA.add_hline(y=yintercept_cutoff_cv_DHA[0.98], line_width=3, line_dash="dash", line_color="purple")
+# Add vertical lines
+fig2_DHA.add_vline(x=xintercept_cutoff_cv_DHA[0.02], line_width=3, line_dash="dash", line_color="purple")
+fig2_DHA.add_vline(x=xintercept_cutoff_cv_DHA[0.98], line_width=3, line_dash="dash", line_color="purple")
+# Update layout
+fig2_DHA.update_layout(title_text=f'Site level log2FC model',
+                   title_x=0.5,
+                  xaxis_title=f'{setA}_log2_mean_FC_sites', yaxis_title=f'{setB}_log2_mean_FC_sites',
+                  showlegend=False,
+                  plot_bgcolor='white')
+
+
+##Trending plot 
+
+DHA_megatable = pd.read_excel('assets/DHA_megatable.xlsx')

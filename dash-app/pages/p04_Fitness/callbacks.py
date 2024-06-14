@@ -96,7 +96,6 @@ def update_info_tables(page, page_size,gene_list,upload_clicks,description_filte
            df = df.loc[df['geneID'].str.lower().str.contains(geneid_filter1.lower(),na=False)]
         if upload_clicks:
          gene_ids_list = gene_list.split(',')
-         print(type(gene_list))
          df = df.loc[df['geneID'].str.lower().isin([gene_id.lower() for gene_id in gene_ids_list])]
     if description_filter:
      df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower(),na=False)]
@@ -392,10 +391,8 @@ def trending_plot(input_gene_list,table,uploaded):
             gene_name = gene_name_elements
         figures=fdata.trendingPlot([gene_name])
     elif uploaded : 
-      print(uploaded)
       if isinstance(input_gene_list, str):
           input_gene_list = [gene.strip() for gene in input_gene_list.split(',') if gene.strip()]
-          print(input_gene_list)
           figures= fdata.trendingPlot(input_gene_list)
     
     graph_columns = [dbc.Col(dcc.Graph(id=f'trending-plot-ft-{i}', figure=fig)) for i, fig in enumerate(figures)]
