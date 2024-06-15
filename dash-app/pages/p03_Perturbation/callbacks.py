@@ -168,7 +168,7 @@ Output("trending-plot_DHA",'figure'),
 [Input('gene-list-store_pr_DHA','data')]
 )
 def update_trending_plot(geneName):
-    df_plot=pdata.trending_plot(pdata.DHA_megatable,geneName)
+    df_plot=pdata.trending_plot_DHA(pdata.DHA_megatable,geneName)
   
     # Create a line plot with points using Plotly Express
     fig = px.line(df_plot, x='Time', y='logFC_edgeR', color='cond', facet_col='geneID',
@@ -179,6 +179,7 @@ def update_trending_plot(geneName):
     yaxis_title="log2FC_edgeR",
     template='plotly_white',
    )  
+    fig.update_xaxes(categoryorder='array', categoryarray=sorted(df_plot['Time'].unique(), key=lambda x: int(pdata.extract_day(x))))
     fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
     return fig
 
@@ -187,7 +188,7 @@ Output("trending-plot1_DHA",'figure'),
 Input('gene-list-store_pr_DHA','data')
 )
 def update_trending_plot1(geneName):
-    df_plot=pdata.trending_plot(pdata.DHA_megatable,geneName)
+    df_plot=pdata.trending_plot_DHA(pdata.DHA_megatable,geneName)
     # Create a line plot with points using Plotly Express
     fig = px.line(df_plot, x='Time', y='log2_mean_FC_sites', color='cond', facet_col='geneID',
               color_discrete_sequence=px.colors.qualitative.Set1, markers=True)
@@ -196,6 +197,7 @@ def update_trending_plot1(geneName):
     fig.update_layout(
     template='plotly_white',
    )  
+    fig.update_xaxes(categoryorder='array', categoryarray=sorted(df_plot['Time'].unique(), key=lambda x: int(pdata.extract_day(x))))
 # Update facet labels
     fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
     return fig

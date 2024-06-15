@@ -30,7 +30,7 @@ def make_filter_popover(name, data, step):
             id=f'network-nodes-table-filter-{name}-popover',
             target=f'network-nodes-table-filter-{name}-toggle-button',
             trigger='legacy',
-            style={'width': '600px'},
+            # style={'width': '600px'},
         ),
     ])
 
@@ -57,16 +57,16 @@ filter_inputs = {
 
 # Define table columns
 table_columns = [
-    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
+    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '15%', }, 'style': {'width': '15%', }},
     {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "ref_gene_id", "name": "lncRNA_refgene", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "class_code", "name": "lncRNA_class", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
+    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
 ]
 # Define the path for the BED file
 path_bed = r'assets/Pk_5502transcript_864lncRNAtranscript_modified.bed'
@@ -121,8 +121,8 @@ body = [
             dbc.CardBody([
                 dbc.Row(dbc.Col(
                     dbc.Table([
-                       html.Thead([
-                           html.Tr([html.Th(col['name'], style={**col['header_style'],'max-width':'400px'}) for col in table_columns]),
+                       html.Thead( style={ 'overflow': 'hidden'}, children=[
+                           html.Tr([html.Th(col['name'], style=col['header_style']) for col in table_columns]),
                            html.Tr([
                          html.Th(
                                 filter_inputs[col['id']]
@@ -133,7 +133,8 @@ body = [
 
                         ],
                     id='network-nodes-table-header',
-                    class_name='mb-0 overflow-hidden' ),
+                    responsive=True,
+                    class_name='mb-0'),
                 )),
                 dbc.Row(dbc.Col(
                     dbc.Spinner([
@@ -145,7 +146,7 @@ body = [
                 dbc.Row([
                     dbc.Col([
                         dbc.Pagination(id='network-nodes-table-pagination', active_page=1, max_value=2, first_last=True, previous_next=True, fully_expanded=False, size='sm', class_name='primary outline'),
-                    ], width={'offset': 6, 'size': 4}, ),
+                    ], width={'offset' : 6 ,'size': 4}),
                     dbc.Col([
                         html.Div(dbc.RadioItems(
                             id='network-nodes-table-page-size-radio',

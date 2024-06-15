@@ -380,3 +380,40 @@ fig2_DHA.update_layout(title_text=f'Site level log2FC model',
 ##Trending plot 
 
 DHA_megatable = pd.read_excel('assets/DHA_megatable.xlsx')
+
+def trending_plot_DHA(Drug_megatable,geneName):
+    # Filter the megatable to include only the specified genes
+    megatable = Drug_megatable[Drug_megatable['geneID'].isin(geneName)]
+    
+    # Select columns containing "_logFC" in their names
+    df = megatable.filter(like='_logFC')
+    # Select columns containing "mean_log2_FC_sites" in their names
+    df2 = megatable.filter(like='mean_log2_FC_sites')
+    
+    # Select columns containing "mean_FC_sites" in their names
+    df3 = megatable.filter(like='mean_FC_sites')
+    
+    # Create a dataframe to plot
+    df_plot = pd.DataFrame({
+        'geneID': np.repeat(megatable['geneID'], df.shape[1]),
+        'Time': np.tile(df.columns.str.split('_').str[-2], df.shape[0]),
+        'cond': np.tile(df.columns.str.split('_day').str[0], df.shape[0]),
+        'logFC_edgeR': df.values.flatten(),
+        'mean_logFC_sites': df2.values.flatten(),
+        'mean_FC_sites': df3.values.flatten()
+    })
+    
+    # Calculate log2 mean_FC_sites
+    df_plot['log2_mean_FC_sites'] = np.log2(df_plot['mean_FC_sites'])
+    
+    # Extract day number from the Time column
+    df_plot['DayNumber'] = df_plot['Time'].apply(extract_day).astype(int)
+    
+    # Arrange the dataframe by geneID and DayNumber
+    df_plot = df_plot.sort_values(by=['geneID', 'DayNumber'],ascending=[True, True])
+    # Convert geneID, Time, and cond columns to categorical with unique levels
+    df_plot['geneID'] = pd.Categorical(df_plot['geneID'], categories=df_plot['geneID'].unique())
+    # df_plot['Time'] = pd.Categorical(df_plot['Time'], categories=df_plot['Time'].unique(),ordered=True)
+    df_plot['Time'] = pd.Categorical(df_plot['Time'], categories=sorted(df_plot['Time'].unique(), key=extract_day), ordered=True)
+    df_plot['cond'] = pd.Categorical(df_plot['cond'], categories=df_plot['cond'].unique())
+    return df_plot
