@@ -78,8 +78,15 @@ fig.update_layout(title_text=f'CV inverse model',
                    title_x=0.5,
                   xaxis_title=f'{setA}_cv_inverse', yaxis_title=f'{setB}_cv_inverse',
                   showlegend=False,
-                  plot_bgcolor='white')
-
+                  plot_bgcolor='white',font={'color':"black"})
+# fig.update_traces(
+#     marker=dict(
+#          line=dict(
+#              width=0.2,   # Border width
+#             color='black'  # Border color
+#         ),
+#     )
+# )
 
 
 xintercept_cutoff_edgeR = tmp["setA_log2FC_edgeR"].quantile([0.02, 0.98])
@@ -121,7 +128,15 @@ fig1.update_layout(title_text=f'Gene level log2FC model by edgeR',
                    title_x=0.5,
                   xaxis_title=f'{setA}_edgeR_log2FC', yaxis_title=f'{setB}_edgeR_log2FC',
                   showlegend=False,
-                  plot_bgcolor='white')
+                  plot_bgcolor='white',font={'color':"black"})
+fig1.update_traces(
+    marker=dict(
+         line=dict(
+             width=0.4,   # Border width
+            color='black'  # Border color
+        ),
+    )
+)
 
 xintercept_cutoff_cv = tmp["setA_log2_mean_FC_sites"].quantile([0.02, 0.98])
 yintercept_cutoff_cv = tmp["setB_log2_mean_FC_sites"].quantile([0.02, 0.98])
@@ -164,8 +179,15 @@ fig2.update_layout(title_text=f'Site level log2FC model',
                    title_x=0.5,
                   xaxis_title=f'{setA}_log2_mean_FC_sites', yaxis_title=f'{setB}_log2_mean_FC_sites',
                   showlegend=False,
-                  plot_bgcolor='white')
-
+                  plot_bgcolor='white',font={'color':"black"})
+fig2.update_traces(
+    marker=dict(
+         line=dict(
+             width=0.4,   # Border width
+            color='black'  # Border color
+        ),
+    )
+)
 
 ##Trending plot 
 
@@ -288,8 +310,16 @@ fig_DHA.update_layout(title_text=f'CV inverse model',
                    title_x=0.5,
                   xaxis_title=f'{setA}_cv_inverse', yaxis_title=f'{setB}_cv_inverse',
                   showlegend=False,
-                  plot_bgcolor='white')
+                  plot_bgcolor='white', font={'color': 'black'}),
 
+# fig_DHA.update_traces(
+#     marker=dict(
+#          line=dict(
+#              width=0.2,   # Border width
+#             color='black'  # Border color
+#         ),
+#     )
+# )
 
 
 xintercept_cutoff_edgeR_DHA = tmp_DHA["setA_log2FC_edgeR"].quantile([0.02, 0.98])
@@ -331,7 +361,15 @@ fig1_DHA.update_layout(title_text=f'Gene level log2FC model by edgeR',
                    title_x=0.5,
                   xaxis_title=f'{setA}_edgeR_log2FC', yaxis_title=f'{setB}_edgeR_log2FC',
                   showlegend=False,
-                  plot_bgcolor='white')
+                  plot_bgcolor='white', font={'color': 'black'})
+fig1_DHA.update_traces(
+    marker=dict(
+         line=dict(
+             width=0.4,   # Border width
+            color='black'  # Border color
+        ),
+    )
+)
 
 xintercept_cutoff_cv_DHA = tmp_DHA["setA_log2_mean_FC_sites"].quantile([0.02, 0.98])
 yintercept_cutoff_cv_DHA = tmp_DHA["setB_log2_mean_FC_sites"].quantile([0.02, 0.98])
@@ -374,9 +412,16 @@ fig2_DHA.update_layout(title_text=f'Site level log2FC model',
                    title_x=0.5,
                   xaxis_title=f'{setA}_log2_mean_FC_sites', yaxis_title=f'{setB}_log2_mean_FC_sites',
                   showlegend=False,
-                  plot_bgcolor='white')
+                  plot_bgcolor='white', font={'color': 'black'})
 
-
+fig2_DHA.update_traces(
+    marker=dict(
+         line=dict(
+            width=0.4,  # Border width
+            color='black'  # Border color
+        ),
+    )
+)
 ##Trending plot 
 
 DHA_megatable = pd.read_excel('assets/DHA_megatable.xlsx')
@@ -417,3 +462,62 @@ def trending_plot_DHA(Drug_megatable,geneName):
     df_plot['Time'] = pd.Categorical(df_plot['Time'], categories=sorted(df_plot['Time'].unique(), key=extract_day), ordered=True)
     df_plot['cond'] = pd.Categorical(df_plot['cond'], categories=df_plot['cond'].unique())
     return df_plot
+
+geneName = ("PKNH_0621300", "PKNH_0722900")
+df_plot=trending_plot_DHA(DHA_megatable,geneName)
+  
+    # Create a line plot with points using Plotly Express
+fig_tr_DHA = px.line(df_plot, x='Time', y='logFC_edgeR', color='cond', facet_col='geneID',
+              color_discrete_sequence=px.colors.qualitative.Set1, markers=True)
+    
+# Update the layout
+fig_tr_DHA.update_layout(
+    yaxis_title="log2FC_edgeR",
+    template='plotly_white',
+   )  
+fig_tr_DHA.update_xaxes(categoryorder='array', categoryarray=sorted(df_plot['Time'].unique(), key=lambda x: int(extract_day(x))))
+fig_tr_DHA.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+
+
+
+    # Create a line plot with points using Plotly Express
+fig1_tr_DHA = px.line(df_plot, x='Time', y='log2_mean_FC_sites', color='cond', facet_col='geneID',
+              color_discrete_sequence=px.colors.qualitative.Set1, markers=True)
+   
+# Update the layout
+fig1_tr_DHA.update_layout(
+    template='plotly_white',
+   )  
+fig1_tr_DHA.update_xaxes(categoryorder='array', categoryarray=sorted(df_plot['Time'].unique(), key=lambda x: int(extract_day(x))))
+# Update facet labels
+fig1_tr_DHA.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+
+
+
+df_plot_GNF=trending_plot_DHA(GNF_megatable,geneName)
+  
+    # Create a line plot with points using Plotly Express
+fig_tr_GNF = px.line(df_plot, x='Time', y='logFC_edgeR', color='cond', facet_col='geneID',
+              color_discrete_sequence=px.colors.qualitative.Set1, markers=True)
+    
+# Update the layout
+fig_tr_GNF.update_layout(
+    yaxis_title="log2FC_edgeR",
+    template='plotly_white',
+   )  
+fig_tr_GNF.update_xaxes(categoryorder='array', categoryarray=sorted(df_plot['Time'].unique(), key=lambda x: int(extract_day(x))))
+fig_tr_GNF.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+
+
+
+    # Create a line plot with points using Plotly Express
+fig1_tr_GNF= px.line(df_plot, x='Time', y='log2_mean_FC_sites', color='cond', facet_col='geneID',
+              color_discrete_sequence=px.colors.qualitative.Set1, markers=True)
+   
+# Update the layout
+fig1_tr_GNF.update_layout(
+    template='plotly_white',
+   )  
+fig1_tr_GNF.update_xaxes(categoryorder='array', categoryarray=sorted(df_plot['Time'].unique(), key=lambda x: int(extract_day(x))))
+# Update facet labels
+fig1_tr_GNF.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))

@@ -30,7 +30,7 @@ def make_filter_popover(name, data, step):
             id=f'network-nodes-table-filter-{name}-popover',
             target=f'network-nodes-table-filter-{name}-toggle-button',
             trigger='legacy',
-            # style={'width': '600px'},
+            style={'width': '600px'},
         ),
     ])
 
@@ -42,13 +42,14 @@ step_value = 0.1
 filter_inputs = {
     'GeneIDPkH': dbc.Input(id='network-nodes-table-filter-GeneIDPkH', placeholder='Filter ...', size='sm'),
     'Product_Description': dbc.Input(id='network-nodes-table-filter-Product_Description', placeholder='Filter ...', size='sm'),
+    'Symbol': dbc.Input(id='network-nodes-table-filter-symbol', placeholder='Filter ...', size='sm'),
     'No_of_TTAA': [
         make_filter_popover('No_of_TTAA', data_name['No_of_TTAA'], 1),
         # dbc.Input(id='network-nodes-table-filter-No_of_TTAA', placeholder='Filter ...',  size='sm', style={'width': '50px'})
     ],
-    'MIS': make_filter_popover('MIS', data_name['MIS'], step_value),
     'ref_gene_id': dbc.Input(id='network-nodes-table-filter-ref_gene_id', placeholder='Filter ...', size='sm'),
     'class_code': dbc.Input(id='network-nodes-table-filter-class_code', placeholder='Filter ...', size='sm'),
+    'MIS': make_filter_popover('MIS', data_name['MIS'], step_value),
     'OIS': make_filter_popover('OIS', data_name['OIS'], step_value),
     'HMS': make_filter_popover('HMS', data_name['HMS'], step_value),
     'GeneIDPf3D7': dbc.Input(id='network-nodes-table-filter-GeneIDPf3D7', placeholder='Filter ...', size='sm'),
@@ -57,16 +58,17 @@ filter_inputs = {
 
 # Define table columns
 table_columns = [
-    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
-    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '15%', }, 'style': {'width': '15%', }},
-    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "GeneIDPkH", "name": "GeneID", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
+    {"id": "Product_Description", "name": "Product.Description", "editable": False,'header_style': {'width': '16%', }, 'style': {'width': '16%', }},
+    {"id": "Symbol", "name": "Symbol", "editable": False,'header_style': {'width': '7%', }, 'style': {'width': '7%', }},
+    {"id": "No_of_TTAA", "name": "TTAA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "ref_gene_id", "name": "ref_gene_id", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
+    {"id": "class_code", "name": "lncRNA_class", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
     {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "ref_gene_id", "name": "lncRNA_refgene", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "class_code", "name": "lncRNA_class", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
-    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
+    {"id": "GeneIDPf3D7", "name": "GeneIDPf3D7", "editable": False,'header_style': {'width': '11%', }, 'style': {'width': '11%', }},
+    {"id": "GeneIDPbANKA", "name": "GeneIDPbANKA", "editable": False,'header_style': {'width': '13%', }, 'style': {'width': '13%', }},
 ]
 # Define the path for the BED file
 path_bed = r'assets/Pk_5502transcript_864lncRNAtranscript_modified.bed'
@@ -106,6 +108,7 @@ tracks =[
                     'color': 'rgb(255,0,0)'
                 },
             ]
+
 # Initialize menu as an empty list
 menu = []
 # Define the layout for the body of the app
@@ -115,13 +118,26 @@ body = [
     dbc.Row([dbc.Col([
         dbc.Card([
             dbc.CardHeader([
-                html.H4('Table for essentiality'),
-                html.Small('select or deselect a gene by clicking on a row in the table below'),
+                html.H4('Table for essentiality of protein-coding genes and lncRNAs'),
+                html.H6('select or deselect a gene or lncRNA by clicking on a row in the table below'),
+                # html.Br,
+                html.H6('Annotations for table column names:'), html.Small(dcc.Markdown('''                                             
+- “GeneID”: The unique PlasmoDB gene identifier.                                                 
+- “Product.Description”: PlasmoDB gene product description corresponding to the gene accession.                                                  
+- “Symbol”: Gene name or symbol from PlasmoDB.                                                
+- “TTAA”: The total number of TTAA within the CDS of the gene.                                                  
+- “MIS”: Scores calculated by Mutagenesis Index Score model.                                                 
+- “OIS”: Scores calculated by Occupancy Index Score model.                                                  
+- “HMS”: Scores calculated by Hybrid model score based on BMS and MMIS.                                                  
+- “ref_gene_id”: The gene ID of protein coding genes overlapped                                                 
+- “lncRNA_class”: The types of lncRNA.                                                  
+- "GeneIDPf3D7": orthologous gene ID for Plasmodium falciparum 3D7                                                  
+- "GeneIDPbANKA": orthologous gene ID for Plasmodium berghei ANKA''')),
             ]),
             dbc.CardBody([
                 dbc.Row(dbc.Col(
                     dbc.Table([
-                       html.Thead( style={ 'overflow': 'hidden'}, children=[
+                       html.Thead( children=[
                            html.Tr([html.Th(col['name'], style=col['header_style']) for col in table_columns]),
                            html.Tr([
                          html.Th(
@@ -133,15 +149,16 @@ body = [
 
                         ],
                     id='network-nodes-table-header',
-                    responsive=True,
+                     style={'tableLayout': 'fixed', 'width': '100%','fontSize': 'small'},
+                    # responsive=True,
                     class_name='mb-0'),
                 )),
                 dbc.Row(dbc.Col(
                     dbc.Spinner([
 
-                    dbc.Table(id='network-nodes-table', hover=True),
+                    dbc.Table(id='network-nodes-table', hover=True,responsive=True,style={'tableLayout': 'fixed', 'width': '100%' , 'fontSize': 'small'} ,),
 
-                    ], id=f'loading-network-nodes-table', type='border', fullscreen=False, color='primary', delay_hide=0,),
+                    ], id=f'loading-network-nodes-table', type='border', fullscreen=False, color='primary', delay_hide=0, ),
                 )),
                 dbc.Row([
                     dbc.Col([

@@ -21,12 +21,14 @@ data = load_data(path).round(3)
 # data["MFS.slope"] = data["MFS.slope"].round(3)
 # Define table columns
 table_columns = [
-    {"id": "geneID", "name": "GeneID", "editable": False,'header_style': {'width': '25%', }, 'style': {'width': '15%', }},
-    {"id": "MFS.slope", "name": "FIS", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '10%', }},
-    {"id": "lm.p.value", "name": "lm.p.value", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '15%', }},
-    {"id": "lm.adjusted.p.value", "name": "lm.adjusted.p.value", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '15%', }},
-     {"id": "Product.Description", "name": "Product_Description", "editable": False,'header_style': {'width': '25%', }, 'style': {'width': '25%', }},
-    {"id": "e.pvalue", "name": "e.pvalue", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '15%', }},
+    {"id": "geneID", "name": "GeneID", "editable": False,'header_style': {'width': '15%', }, 'style': {'width': '15%', }},
+    {"id": "Product.Description", "name": "Product_Description", "editable": False,'header_style': {'width': '25%', }, 'style': {'width': '25%', }},
+    {"id": "Symbol", "name": "Symbol", "editable": False,'header_style': {'width': '15%', }, 'style': {'width': '15%', }},
+    {"id": "MFS.slope", "name": "FIS", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "lm.p.value", "name": "lm.p.value", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "lm.adjusted.p.value", "name": "lm.adjusted.p.value", "editable": False,'header_style': {'width': '20%', }, 'style': {'width': '20%', }},
+    {"id": "trend", "name": "Trend", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "e.pvalue", "name": "e.pvalue", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
 ]
 
 
@@ -76,8 +78,10 @@ def update_selected_rows(row_n_clicks, table,data):
     Input('e_pvalue-slider', 'value'),
     State('selected-network-nodes-ft', 'data'),
     Input('clear-button-ft', 'n_clicks'), 
+    Input('network-nodes-table-filter-symbol', 'value'),
+    Input('network-nodes-table-filter-trend', 'value'),
 )
-def update_info_tables(page, page_size,gene_list,upload_clicks,description_filter,geneid_filter1,MFS_Slope_slider, lm_p_filter, lm_p_adj_filter, e_p_filter, selected_nodes,clear_clicks):
+def update_info_tables(page, page_size,gene_list,upload_clicks,description_filter,geneid_filter1,MFS_Slope_slider, lm_p_filter, lm_p_adj_filter, e_p_filter, selected_nodes,clear_clicks,symbol_filter,trend_filter):
     """
     Callback to update the network nodes table and pagination.
 
@@ -88,7 +92,12 @@ def update_info_tables(page, page_size,gene_list,upload_clicks,description_filte
     page = int(page) - 1
 
     
+    
     df = data.copy()  # Create a copy to avoid modifying the original data
+    df['lm.p.value'] = pd.to_numeric(df['lm.p.value'], errors='coerce')
+    df['lm.adjusted.p.value'] = pd.to_numeric(df['lm.adjusted.p.value'], errors='coerce')
+    df['e.pvalue'] = pd.to_numeric(df['e.pvalue'], errors='coerce')
+
     if clear_clicks:
         df = data.copy()
     if geneid_filter1 or upload_clicks and not clear_clicks:
@@ -102,11 +111,15 @@ def update_info_tables(page, page_size,gene_list,upload_clicks,description_filte
     if MFS_Slope_slider :
       df = df.loc[(df['MFS.slope'] >= MFS_Slope_slider[0]) & (df['MFS.slope'] <= MFS_Slope_slider[1])]
     if lm_p_filter:
-      df = df.loc[(df[''] >= lm_p_filter[0]) & (df['lm.p.value'] <= lm_p_filter[1])]
+      df = df.loc[(df['lm.p.value'] >= lm_p_filter[0]) & (df['lm.p.value'] <= lm_p_filter[1])]
     if lm_p_adj_filter:
      df = df.loc[(df['lm.adjusted.p.value'] >= lm_p_adj_filter[0]) & (df['lm.adjusted.p.value'] <= lm_p_adj_filter[1])]
     if e_p_filter:
      df = df.loc[(df['e.pvalue'] >= e_p_filter[0]) & (df['e.pvalue'] <= e_p_filter[1])]
+    if symbol_filter:
+     df = df.loc[df['Symbol'].str.lower().str.contains(symbol_filter.lower(),na=False)]
+    if trend_filter:
+     df = df.loc[df['trend'].str.lower().str.contains(trend_filter.lower(),na=False)]
 
 
     data_slice = [{'index': i, 'GeneID': '', 'Product_Description': ''} for i in range(page * page_size, (page + 1) * page_size)]
@@ -144,10 +157,12 @@ def update_info_tables(page, page_size,gene_list,upload_clicks,description_filte
     Input('e_pvalue-slider', 'value'),
     State('selected-network-nodes-ft', 'data'),
     Input('clear-button-ft', 'n_clicks'), 
+    Input('network-nodes-table-filter-symbol', 'value'),
+    Input('network-nodes-table-filter-trend', 'value'),
 
     prevent_initial_call=True,
 ) 
-def reset_n_clicks(list,upload_clicks,description_filter, geneid_filter1,MFS_Slope_slider, lm_p_filter, lm_p_adj_filter, e_p_filter, selected_nodes,clear_clicks ):
+def reset_n_clicks(list,upload_clicks,description_filter, geneid_filter1,MFS_Slope_slider, lm_p_filter, lm_p_adj_filter, e_p_filter, selected_nodes,clear_clicks,symbol_filter,trend_filter):
     """
     Callback to reset the download button n_clicks.
 
@@ -321,7 +336,7 @@ def update_scatter_plot(selected_cells,table):
 # Create the scatter plot
          fig = go.Figure(data=go.Scatter(
          x=fdata.df2['HMS'], y=fdata.df2['MFS.slope'],
-         mode='markers', marker=dict(color=colors, size=8),
+         mode='markers', marker=dict(color=colors,),
         hoverinfo='text',  # Show text on hover
       text=fdata.df2['geneID'] + '<br>' +  
            'HMS: ' + fdata.df2['HMS'].astype(str) + '<br>' +  
@@ -329,7 +344,7 @@ def update_scatter_plot(selected_cells,table):
   ))
          fig.add_trace(go.Scatter(
             x=gene_df['HMS'], y=gene_df['MFS.slope'],
-            mode='markers', marker=dict(color='#13B187', size=8), name=gene_name,
+            mode='markers', marker=dict(color='#13B187', ), name=gene_name,
             hoverinfo='text',  # Show text on hover
             text=gene_df['geneID'] + '<br>' +  
                  'HMS: ' + gene_df['HMS'].astype(str) + '<br>' +  
@@ -353,18 +368,26 @@ def update_scatter_plot(selected_cells,table):
          fig.update_layout(
       template='plotly_white',
       xaxis_title='HMS',
-    #   yaxis_title='Fitness Index Score',
-      title='Fitness Index Score vs HMS',
-      legend=dict(
-        bgcolor='rgba(0,0,0,0)',
-        font=dict(size=14),
-        x=0.6, y=0.4
-      ),
+      yaxis_title='Fitness Index Score',
+    #   legend=dict(
+    #     bgcolor='rgba(0,0,0,0)',
+    #     font=dict(size=14),
+    #     x=0.6, y=0.4
+    #   ),
        margin=dict(l=0, r=0, t=30, b=0),
        plot_bgcolor='white',
        legend_title_text=None,
-       font=dict(color='black', size=18),  # Update axis and label font properties
-       yaxis=dict(tickfont=dict(color='black'))
+       font=dict(color='black'),  # Update axis and label font properties
+       yaxis=dict(tickfont=dict(color='black')),
+        legend=dict(
+        bgcolor='rgba(0,0,0,0)',
+        # font=dict(size=14),  # Update legend font size
+        x=1.02,  # Position the legend to the extreme right
+        y=1,     # Adjust the y position to be at the top
+        xanchor='left',  # Ensure the legend aligns to the right edge of the plot
+        yanchor='top',
+        font={'color':"black"}
+    )
        )
     else:
         fig = fdata.fig
@@ -399,3 +422,79 @@ def trending_plot(input_gene_list,table,uploaded):
 
     return graph_columns
    
+
+@app.callback(
+    Output('download-data-ft', 'data'),
+    Input('download-button-ft', 'n_clicks'),
+    Input('network-nodes-table-filter-GeneID', 'value'),
+    Input('gene-list-store-ft','data'),
+   Input('upload-modal-button-ft', 'n_clicks'),
+    Input('network-nodes-table-filter-Product_Description', 'value'),
+    Input('network-nodes-table-filter-symbol', 'value'),
+    Input('MFS_slope-slider', 'value'),
+    Input('lm_p_value-slider', 'value'),
+    Input('lm_adjusted_p_value-slider', 'value'),
+    Input('e_pvalue-slider', 'value'),
+    State('selected-network-nodes-ft', 'data'),
+    Input('clear-button-ft', 'n_clicks'), 
+    Input('network-nodes-table-filter-trend', 'value'),
+    prevent_initial_call=True,
+)
+def update_download_button(n_clicks, geneid_filter1,gene_list,upload_clicks,description_filter,symbol_filter, MFS_Slope_slider, lm_p_filter, lm_p_adj_filter, e_p_filter, selected_nodes,clear_clicks,trend_filter):
+   """
+    Callback to update the download button data.
+
+    Returns:
+        dict or None: Download button data.
+    """
+   if n_clicks is None:
+      PreventUpdate
+   if n_clicks is not None:
+    df = data.copy()  # Create a copy to avoid modifying the original data
+    if clear_clicks:
+        df = data.copy()
+        csv_string = df.to_csv(index=False, encoding='utf-8')
+        return dict(content=csv_string, filename=f"datatable.csv")
+    if geneid_filter1 or upload_clicks and not clear_clicks:
+        if geneid_filter1 :
+           df = df.loc[df['GeneID'].str.lower().str.contains(geneid_filter1.lower())]
+           csv_string = df.to_csv(index=False, encoding='utf-8')
+           return dict(content=csv_string, filename=f"{(geneid_filter1)}_table.csv")
+        if upload_clicks:
+         gene_ids_list = list.split(',')
+         df = df.loc[df['GeneID'].str.lower().isin([gene_id.lower() for gene_id in gene_ids_list])]
+         csv_string = df.to_csv(index=False, encoding='utf-8')
+         return dict(content=csv_string, filename=f"{','.join(gene_ids_list)}_table.csv")
+    if description_filter:
+     df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower())]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"{(description_filter)}_table.csv")
+    if symbol_filter:
+     df = df.loc[df['Symbol'].str.lower().str.contains(symbol_filter.lower())]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"{(symbol_filter)}_table.csv")
+    if MFS_Slope_slider :
+      df = df.loc[(df['MFS.slope'] >= MFS_Slope_slider[0]) & (df['MFS.slope'] <= MFS_Slope_slider[1])]
+      csv_string = df.to_csv(index=False, encoding='utf-8')
+      return dict(content=csv_string, filename=f"MFS.Slope_range_{MFS_Slope_slider[0]}_{MFS_Slope_slider[1]}_table.csv")
+    if lm_p_filter:
+      df = df.loc[(df['lm.p.value'] >= lm_p_filter[0]) & (df['lm.p.value'] <= lm_p_filter[1])]
+      csv_string = df.to_csv(index=False, encoding='utf-8')
+      return dict(content=csv_string, filename=f"lm.p_range_{lm_p_filter[0]}_{lm_p_filter[1]}_table.csv")
+    if lm_p_adj_filter:
+     df = df.loc[(df['lm.adjusted.p.value'] >= lm_p_adj_filter[0]) & (df['lm.adjusted.p.value'] <= lm_p_adj_filter[1])]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"lm.p.adj_range_{lm_p_adj_filter[0]}_{lm_p_adj_filter[1]}_table.csv")
+    if e_p_filter:
+     df = df.loc[(df['e.pvalue'] >= e_p_filter[0]) & (df['e.pvalue'] <= e_p_filter[1])]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"e.p_range_{e_p_filter[0]}_{e_p_filter[1]}_table.csv")
+    if trend_filter:
+     df = df.loc[df['trend'].str.lower().str.contains(trend_filter.lower(),na=False)]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"{(trend_filter)}_table.csv")
+    else:
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"datatable.csv")
+
+

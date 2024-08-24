@@ -9,7 +9,12 @@ import statsmodels.api as sm
 
 kneepoints1 = 0.26 
 kneepoints2 = 0.88
+
+
 df2 = pd.read_excel('assets/HMS_MFS_regression_trending_results_pcgenes_loess_normalization.xlsx')
+df2['lm.p.value'] = pd.to_numeric(df2['lm.p.value'], errors='coerce')
+df2['lm.adjusted.p.value'] = pd.to_numeric(df2['lm.adjusted.p.value'], errors='coerce')
+df2['e.pvalue'] = pd.to_numeric(df2['e.pvalue'], errors='coerce')
 
 # Positive: fitness favored genes
 c1_Fslope_ep = df2[(df2['e.pvalue'] <= 0.05) & (df2['MFS.slope'] > 0)]['MFS.slope'].min()
@@ -45,7 +50,6 @@ fig.add_trace(go.Scatter(
     marker=dict(
         color='grey',  # Change color to grey
         opacity=0.5,
-        size=10,
     ),
     hoverinfo='text',
     text=df2['geneID']+'<br>' +  
@@ -59,7 +63,7 @@ fig.add_trace(go.Scatter(
     x=slow['HMS'], 
     y=slow['MFS.slope'],
     mode='markers', 
-    marker=dict(color='#E3770C', size=10),
+    marker=dict(color='#E3770C',),
     name='Low Fitness',
     hoverinfo='text', 
     text=slow['geneID'] + '<br>' +  
@@ -72,7 +76,7 @@ fig.add_trace(go.Scatter(
     x=fitness_favored['HMS'], 
     y=fitness_favored['MFS.slope'],
     mode='markers', 
-    marker=dict(color='pink', size=10),
+    marker=dict(color='pink',),
     name='High Fitness',
     hoverinfo='text',  
     text=fitness_favored['geneID'] + '<br>' +  
@@ -92,13 +96,13 @@ fig.update_layout(
     template='plotly_white',
     xaxis_title='HMS',
     yaxis_title='Fitness Index Score',
-    legend=dict(
-        bgcolor='rgba(0,0,0,0)',
-        font=dict(size=14),  # Update legend font size
-        x=0.6, y=0.4
-    ),
+    # legend=dict(
+    #     bgcolor='rgba(0,0,0,0)',
+    #     font=dict(size=14),  # Update legend font size
+    #     x=0.6, y=0.4
+    # ),
     margin=dict(l=0, r=0, t=30, b=0),
-    font=dict(color='black', size=18),  # Update axis and label font properties
+    font=dict(color='black'),  # Update axis and label font properties
     yaxis=dict(tickfont=dict(color='black'))
 )
 
@@ -109,7 +113,16 @@ fig.update_yaxes(range=[-1, 0.5])
 fig.update_layout(
     xaxis_showgrid=False,
     yaxis_showgrid=False,
-    showlegend=True
+    showlegend=True,
+     legend=dict(
+        bgcolor='rgba(0,0,0,0)',
+        # font=dict(size=14),  # Update legend font size
+        x=1.02,  # Position the legend to the extreme right
+        y=1,     # Adjust the y position to be at the top
+        xanchor='left',  # Ensure the legend aligns to the right edge of the plot
+        yanchor='top',
+        font={'color':"black"}
+    )
 )
 
 
@@ -152,7 +165,7 @@ def trendingPlot(input_gene_list):
             x=1, y=1,
             showarrow=False,
             align='right',
-            font=dict(size=12, color="black"),
+            font=dict(color="black"),
             # bordercolor="black", borderwidth=1
         )
 
@@ -173,7 +186,12 @@ def trendingPlot(input_gene_list):
             yaxis_title="MFS",
             title=dict(text=f"{geneName}", x=0.5),
             legend_title_text=None,
-            font=dict(size=14)
+            font={'color':"black"}
         )
+        
         figures.append(fig2)
+        print(f"Figure for gene: {geneName}")
+        print("Data:", fig2.data)  # Print data traces
+        print("Layout:", fig2.layout)  # Print layout details
+        print("Annotations:", fig2.layout.annotations)  # Print annotations if any
     return figures

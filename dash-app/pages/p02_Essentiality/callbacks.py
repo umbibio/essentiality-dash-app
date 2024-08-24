@@ -75,16 +75,17 @@ tracks =[
 
 # Define columns for the data table
 table_columns = [
-    {"id": "GeneIDPkH", "name": "GeneID.PkH", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
-    {"id": "Product_Description", "name": "Product_Description", "editable": False,'header_style': {'width': '15%', }, 'style': {'width': '15%', }},
-    {"id": "No_of_TTAA", "name": "No_of_TTAA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "GeneIDPkH", "name": "GeneID", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
+    {"id": "Product_Description", "name": "Product.Description", "editable": False,'header_style': {'width': '16%', }, 'style': {'width': '16%', }},
+    {"id": "Symbol", "name": "Symbol", "editable": False,'header_style': {'width': '7%', }, 'style': {'width': '7%', }},
+    {"id": "No_of_TTAA", "name": "TTAA", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
+    {"id": "ref_gene_id", "name": "ref_gene_id", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
+    {"id": "class_code", "name": "lncRNA_class", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
     {"id": "MIS", "name": "MIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "ref_gene_id", "name": "lncRNA_refgene", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "class_code", "name": "lncRNA_class", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "OIS", "name": "OIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
     {"id": "HMS", "name": "HMS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "GeneIDPf3D7", "name": "GeneID.Pf_3D7", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
-    {"id": "GeneIDPbANKA", "name": "GeneID.Pb_ANKA", "editable": False,'header_style': {'width': '10%', }, 'style': {'width': '10%', }},
+    {"id": "GeneIDPf3D7", "name": "GeneIDPf3D7", "editable": False,'header_style': {'width': '11%', }, 'style': {'width': '11%', }},
+    {"id": "GeneIDPbANKA", "name": "GeneIDPbANKA", "editable": False,'header_style': {'width': '13%', }, 'style': {'width': '13%', }},
 ]
 # Define the Dash app callback context
 ctx = callback_context
@@ -131,6 +132,7 @@ def update_selected_rows(row_n_clicks, table,data):
     Input('gene-list-store','data'),
     Input('upload-modal-button', 'n_clicks'),
     Input('network-nodes-table-filter-Product_Description', 'value'),
+    Input('network-nodes-table-filter-symbol', 'value'),
     Input('network-nodes-table-filter-GeneIDPf3D7', 'value'),
     Input('network-nodes-table-filter-GeneIDPbANKA', 'value'),
     Input('No_of_TTAA-slider', 'value'),
@@ -143,7 +145,7 @@ def update_selected_rows(row_n_clicks, table,data):
     Input('network-nodes-table-filter-ref_gene_id', 'value'),
     Input('network-nodes-table-filter-class_code', 'value'),
 )
-def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks,gene_ref_id_filter,class_code_filter):
+def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,description_filter,symbol_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks,gene_ref_id_filter,class_code_filter):
     """
     Callback to update the network nodes table and pagination.
 
@@ -182,6 +184,8 @@ def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,descri
          df = df.loc[df['GeneIDPkH'].str.lower().isin([gene_id.lower() for gene_id in gene_ids_list])]
     if description_filter:
      df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower(),na=False)]
+    if symbol_filter:
+     df = df.loc[df['Symbol'].str.lower().str.contains(symbol_filter.lower(),na=False)]
     if TTAA_filter_slider :
      if TTAA_filter_slider :
       df = df.loc[(df['No_of_TTAA'] >= TTAA_filter_slider[0]) & (df['No_of_TTAA'] <= TTAA_filter_slider[1])]
@@ -317,6 +321,7 @@ def update_igv_locus(table, selected_cells):
     Input('gene-list-store','data'),
    Input('upload-modal-button', 'n_clicks'),
     Input('network-nodes-table-filter-Product_Description', 'value'),
+    Input('network-nodes-table-filter-symbol', 'value'),
     Input('network-nodes-table-filter-GeneIDPf3D7', 'value'),
     Input('network-nodes-table-filter-GeneIDPbANKA', 'value'),
     Input('No_of_TTAA-slider', 'value'),
@@ -331,7 +336,7 @@ def update_igv_locus(table, selected_cells):
 
     prevent_initial_call=True,
 ) 
-def reset_n_clicks(geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks,gene_ref_id_filter,class_code_filter):
+def reset_n_clicks(geneid_filter1,list,upload_clicks,description_filter, symbol_filter,geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks,gene_ref_id_filter,class_code_filter):
     """
     Callback to reset the download button n_clicks.
 
@@ -361,6 +366,7 @@ def reset_n_clicks(geneid_filter1,list,upload_clicks,description_filter, geneid_
     Input('gene-list-store','data'),
    Input('upload-modal-button', 'n_clicks'),
     Input('network-nodes-table-filter-Product_Description', 'value'),
+    Input('network-nodes-table-filter-symbol', 'value'),
     Input('network-nodes-table-filter-GeneIDPf3D7', 'value'),
     Input('network-nodes-table-filter-GeneIDPbANKA', 'value'),
     Input('No_of_TTAA-slider', 'value'),
@@ -374,7 +380,7 @@ def reset_n_clicks(geneid_filter1,list,upload_clicks,description_filter, geneid_
     Input('network-nodes-table-filter-class_code', 'value'),
     prevent_initial_call=True,
 )
-def update_download_button(n_clicks, geneid_filter1,list,upload_clicks,description_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks,gene_ref_id_filter,class_code_filter):
+def update_download_button(n_clicks, geneid_filter1,list,upload_clicks,description_filter,symbol_filter, geneid_filter2, geneid_filter3,TTAA_filter_slider, mis_filter, ois_filter, bm_filter, selected_nodes,clear_clicks,gene_ref_id_filter,class_code_filter):
    """
     Callback to update the download button data.
 
@@ -418,6 +424,18 @@ def update_download_button(n_clicks, geneid_filter1,list,upload_clicks,descripti
      df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower())]
      csv_string = df.to_csv(index=False, encoding='utf-8')
      return dict(content=csv_string, filename=f"{(description_filter)}_table.csv")
+    if symbol_filter:
+     df = df.loc[df['Symbol'].str.lower().str.contains(symbol_filter.lower())]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"{(symbol_filter)}_table.csv")
+    if geneid_filter2:
+      df = df.loc[df['GeneIDPf3D7'].str.lower().str.contains(geneid_filter2.lower(),na=False)]
+      csv_string = df.to_csv(index=False, encoding='utf-8')
+      return dict(content=csv_string, filename=f"{(geneid_filter2)}_table.csv")
+    if geneid_filter3:
+     df = df.loc[df['GeneIDPbANKA'].str.lower().str.contains(geneid_filter3.lower(),na=False)]
+     csv_string = df.to_csv(index=False, encoding='utf-8')
+     return dict(content=csv_string, filename=f"{(geneid_filter3)}_table.csv")
     if TTAA_filter_slider :
      if TTAA_filter_slider :
       df = df.loc[(df['No_of_TTAA'] >= TTAA_filter_slider[0]) & (df['No_of_TTAA'] <= TTAA_filter_slider[1])]
@@ -438,14 +456,7 @@ def update_download_button(n_clicks, geneid_filter1,list,upload_clicks,descripti
      df = df.loc[(df['HMS'] >= bm_filter[0]) & (df['HMS'] <= bm_filter[1])]
      csv_string = df.to_csv(index=False, encoding='utf-8')
      return dict(content=csv_string, filename=f"HMS_range_{bm_filter[0]}_{bm_filter[1]}_table.csv")
-    if geneid_filter2:
-      df = df.loc[df['GeneIDPf3D7'].str.lower().str.contains(geneid_filter2.lower(),na=False)]
-      csv_string = df.to_csv(index=False, encoding='utf-8')
-      return dict(content=csv_string, filename=f"{(geneid_filter2)}_table.csv")
-    if geneid_filter3:
-     df = df.loc[df['GeneIDPbANKA'].str.lower().str.contains(geneid_filter3.lower(),na=False)]
-     csv_string = df.to_csv(index=False, encoding='utf-8')
-     return dict(content=csv_string, filename=f"{(geneid_filter3)}_table.csv")
+   
     if gene_ref_id_filter:
      df = df.loc[df['ref_gene_id'].str.lower().str.contains(gene_ref_id_filter.lower(),na=False)]
      csv_string = df.to_csv(index=False, encoding='utf-8')
@@ -488,17 +499,21 @@ def create_plot(df, selected_genes, y_column, title):
             name="All Genes",
         )
     fig.add_trace(grey_plot)
-    fig.update_traces(showlegend=False)
+    fig.update_traces(showlegend=False,
+)
 
     if selected_genes:
         red_plot = go.Scatter(
             x=selected_genes_data['GeneIndex'],
             y=selected_genes_data[y_column],
             mode='markers',
-            marker=dict(color=highlight_color, size=15),
+            marker=dict(color=highlight_color, size=15,line=dict(
+            color='black',  # Border color
+            width=1         # Border width
+        )),
             name=selected_genes
         )
-        fig.add_trace(red_plot)
+        fig.add_trace(red_plot,)
 
     layout = go.Layout(
            title= f"{y_column} Score",

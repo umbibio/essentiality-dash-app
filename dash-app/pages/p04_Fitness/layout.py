@@ -41,21 +41,26 @@ step_value = 0.1
 filter_inputs = {
     'geneID': dbc.Input(id='network-nodes-table-filter-GeneID', placeholder='Filter ...', size='sm'),
     'Product.Description': dbc.Input(id='network-nodes-table-filter-Product_Description', placeholder='Filter ...', size='sm'),
+    'Symbol': dbc.Input(id='network-nodes-table-filter-symbol', placeholder='Filter ...', size='sm'),
     'MFS.slope': make_filter_popover('MFS_slope', data_name['MFS.slope'], 0.001),
     'lm.p.value': make_filter_popover('lm_p_value', data_name['lm.p.value'], step_value),
     'lm.adjusted.p.value': make_filter_popover('lm_adjusted_p_value', data_name['lm.adjusted.p.value'], step_value),
+    'trend': dbc.Input(id='network-nodes-table-filter-trend', placeholder='Filter ...', size='sm'),
     'e.pvalue': make_filter_popover('e_pvalue', data_name['e.pvalue'], step_value),
 }
 
 # Define table columns
 table_columns = [
-    {"id": "geneID", "name": "GeneID", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
-    {"id": "MFS.slope", "name": "FIS", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "lm.p.value", "name": "lm.p.value", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '5%', }},
-    {"id": "lm.adjusted.p.value", "name": "lm.adjusted.p.value", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
-     {"id": "Product.Description", "name": "Product_Description", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '15%', }},
-    {"id": "e.pvalue", "name": "e.pvalue", "editable": False,'header_style': {'width': '5%', }, 'style': {'width': '10%', }},
+    {"id": "geneID", "name": "GeneID", "editable": False,'header_style': {'width': '15%', }, 'style': {'width': '15%', }},
+    {"id": "Product.Description", "name": "Product_Description", "editable": False,'header_style': {'width': '25%', }, 'style': {'width': '25%', }},
+    {"id": "Symbol", "name": "Symbol", "editable": False,'header_style': {'width': '15%', }, 'style': {'width': '15%', }},
+    {"id": "MFS.slope", "name": "FIS", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "lm.p.value", "name": "lm.p.value", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "lm.adjusted.p.value", "name": "lm.adjusted.p.value", "editable": False,'header_style': {'width': '20%', }, 'style': {'width': '20%', }},
+    {"id": "trend", "name": "Trend", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "e.pvalue", "name": "e.pvalue", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
 ]
+
 
 body = [
       dcc.Store(id='selected-network-nodes-ft', data=[]),
@@ -63,8 +68,18 @@ body = [
     dbc.Row([dbc.Col([
         dbc.Card([
             dbc.CardHeader([
-                html.H4('Table for essentiality'),
-                html.Small('select or deselect a gene by clicking on a row in the table below'),
+                html.H4('Table for Fitness'),
+                html.H5('select or deselect a gene by clicking on a row in the table below'),
+                html.H6('Annotations for table column names:'), html.Small(dcc.Markdown('''                                             
+- “geneID”: The unique PlasmoDB gene identifier.
+- “Product.Description”: PlasmoDB gene product description corresponding to the gene accession.
+- “TTAA”: The total number of TTAA within the CDS of the gene.
+- “Symbol”: Gene name or symbol from PlasmoDB.
+- “FIS”: Fitness Index Scores calculated by fitting a linear regression model to three timepoints of MFS.
+- “lm.p.value”: p-value of the fitted linear regression model for FIS.
+- “lm.adjusted.p.value”: adjusted.p-value for FIS by reducing the false postive in mutiple hypothesis tests.
+- “trend”: Fitness trending of the gene: FIS>0 are labelled as "up", FIS<0 are labelled as "down".
+- “e.pvalue”: The empirical p-value calculated separately for two groups(FIS>0, FIS<0).''')),
             ]),
             dbc.CardBody([
                 dbc.Row(dbc.Col(
@@ -81,12 +96,13 @@ body = [
 
                         ],
                     id='network-nodes-table-header-ft',
+                     style={'tableLayout': 'fixed', 'width': '100%','fontSize': 'small'},
                     class_name='mb-0'),
                 )),
                 dbc.Row(dbc.Col(
                     dbc.Spinner([
 
-                    dbc.Table(id='network-nodes-table-ft', hover=True),
+                    dbc.Table(id='network-nodes-table-ft', hover=True, style={'tableLayout': 'fixed', 'width': '100%','fontSize': 'small'},),
 
                     ], id=f'loading-network-nodes-table-ft', type='border', fullscreen=False, color='primary', delay_hide=0,),
                 )),
@@ -162,9 +178,13 @@ body = [
             dbc.Row([
             dbc.Row(id='trending-plot-container')]
             ),
-            # dbc.Row([ dcc.Graph(
-            #     id='trending-plot1',
-            #     figure={},
-            # ),])
+            dbc.Row([ dcc.Graph(
+                id='trending-plot1',
+                figure={},
+            ),])
             ]),
 ]
+
+
+
+
