@@ -9,4 +9,4 @@ bibtexparser
 plotly
 dash_bio
 statsmodels
-re 
+

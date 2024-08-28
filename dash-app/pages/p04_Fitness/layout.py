@@ -68,9 +68,7 @@ body = [
     dbc.Row([dbc.Col([
         dbc.Card([
             dbc.CardHeader([
-                html.H4('Table for Fitness'),
-                html.H5('select or deselect a gene by clicking on a row in the table below'),
-                html.H6('Annotations for table column names:'), html.Small(dcc.Markdown('''                                             
+                html.H6('To select or deselect a gene by clicking on a row in the table below'), html.Small(dcc.Markdown('''                 
 - “geneID”: The unique PlasmoDB gene identifier.
 - “Product.Description”: PlasmoDB gene product description corresponding to the gene accession.
 - “TTAA”: The total number of TTAA within the CDS of the gene.

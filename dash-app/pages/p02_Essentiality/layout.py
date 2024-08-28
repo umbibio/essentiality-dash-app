@@ -118,21 +118,18 @@ body = [
     dbc.Row([dbc.Col([
         dbc.Card([
             dbc.CardHeader([
-                html.H4('Table for essentiality of protein-coding genes and lncRNAs'),
-                html.H6('select or deselect a gene or lncRNA by clicking on a row in the table below'),
-                # html.Br,
-                html.H6('Annotations for table column names:'), html.Small(dcc.Markdown('''                                             
+                html.H6('To select or deselect a gene or lncRNA by clicking on a row in the table below'),html.Small(dcc.Markdown('''                                             
 - “GeneID”: The unique PlasmoDB gene identifier.                                                 
 - “Product.Description”: PlasmoDB gene product description corresponding to the gene accession.                                                  
 - “Symbol”: Gene name or symbol from PlasmoDB.                                                
 - “TTAA”: The total number of TTAA within the CDS of the gene.                                                  
 - “MIS”: Scores calculated by Mutagenesis Index Score model.                                                 
 - “OIS”: Scores calculated by Occupancy Index Score model.                                                  
-- “HMS”: Scores calculated by Hybrid model score based on BMS and MMIS.                                                  
-- “ref_gene_id”: The gene ID of protein coding genes overlapped                                                 
-- “lncRNA_class”: The types of lncRNA.                                                  
-- "GeneIDPf3D7": orthologous gene ID for Plasmodium falciparum 3D7                                                  
-- "GeneIDPbANKA": orthologous gene ID for Plasmodium berghei ANKA''')),
+- “HMS”: Scores calculated by Hybrid Model Score based on BMS(Bayesian network Model Score)and MMIS(Modified Mutagenesis Index Score).                  
+- “ref_gene_id”: The gene ID of protein coding genes overlapped with corresponding lncRNA.                                                 
+- “lncRNA_class”: The types of lncRNA(o:Sense lncRNA; x:Antisense lncRNA; i:Intronic lncRNA; u: Intergenic lncRNA or lincRNA).                        
+- "GeneIDPf3D7": Orthologous gene ID for Plasmodium falciparum 3D7.                                                  
+- "GeneIDPbANKA": Orthologous gene ID for Plasmodium berghei ANKA''')),
             ]),
             dbc.CardBody([
                 dbc.Row(dbc.Col(
