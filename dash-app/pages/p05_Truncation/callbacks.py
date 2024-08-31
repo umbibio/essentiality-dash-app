@@ -523,6 +523,7 @@ def update_scatter_plot(selected_cells,table):
         hover_data={'GeneID': True,'color':False},
         color_discrete_map={'red': 'red', 'grey': 'grey'},
         labels={'log2(Total.CDS.length)': 'log2(CDS.length)', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
+        title=''
     )
 
     #  fig.add_hline(y=0.3, line_width=5, line_dash="dash", line_color="yellow", layer="above")
@@ -593,7 +594,7 @@ def update_scatter_plot(selected_cells,table):
         hover_data={'GeneID': True,'color':False},
         color_discrete_map={'red': 'red', 'grey': 'grey'},
         labels={'log2(Total.CDS.length)': 'log2(CDS.length)', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
-        
+        title=''
     )
 
     #  fig.add_hline(y=0.3, line_width=5, line_dash="dash", line_color="yellow", layer="above")

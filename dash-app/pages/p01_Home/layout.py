@@ -20,6 +20,7 @@ To explore the data, click on one of the tabs above.
 1. Essentiality: To explore the essentiality of protein-coding genes as well as identified lncRNAs based on different mathematical models (MIS, OIS, HMS). IGV spot check is allowed for any selection.
 2. Perturbation: To explore the change of essentiality of Plasmodium knowlesi genes under DHA and GNF179 drug treatments.  
 3. Fitness: To explore the fitness of the protein-coding genes.                                                                               
+4. Truncation: To explore the truncatable genes.
 
 ''')),
 ])),

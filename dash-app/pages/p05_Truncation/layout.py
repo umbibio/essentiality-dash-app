@@ -89,22 +89,19 @@ This page is to explore the truncatable genes in P.knowlesi. The raw reads of in
     dbc.Row([dbc.Col([
         dbc.Card([
             dbc.CardHeader([
-                html.H4('Table for Truncation'),
-                html.H6('select or deselect a gene by clicking on a row in the table below'),
-                # html.Br,
-                html.H6('Annotations for table column names:'), html.Small(dcc.Markdown('''                                             
+                html.H6('To select or deselect a gene by clicking on a row in the table below'),html.Small(dcc.Markdown('''                                           
 - “GeneID”: The unique PlasmoDB gene identifier.                                                 
 - “Product.Description”: PlasmoDB gene product description corresponding to the gene accession.                                                  
 - “Symbol”: Gene name or symbol from PlasmoDB.                                                
 - "cp": The changing points location calculated by the order of the changing point where it has lowest MSE for fitted step function divided by the total number of TTAA within the CDS of the gene. 
-- "MSE": The minimum Mean Squared Error value calculated in truncation model of the gene in the truncation changing points in order to measure the goodness of fit, the smaller, the better of the fit.                                                                                                                                       
+- "MSE": The minimum Mean Squared Error value calculated in truncation model of the gene in the truncation changing points in order to measure the goodness of fit, the smaller, the better of the fit.                                                                                                                                     
 - "R_i": The relative distance of the changing point's TTAA site to TSS of the gene(The introns of the gene has been removed and all exons are stitched and normalized as 1).
 - "TTAA": Total number of TTAA within the CDS of the gene.                                                                                        
 - “MIS”: Scores calculated by Mutagenesis Index Score model.                                                 
 - “OIS”: Scores calculated by Occupancy Index Score model.                                                  
-- “HMS”: Scores calculated by Hybrid model score based on BMS and MMIS.                                                  
+- “HMS”: Scores calculated by Hybrid Model Score based on BMS(Bayesian network Model score)and MMIS(Modified Mutagenesis Index Score).               
 - "Truncation_type": The types of truncations.                                                
-- "MSE_cutoff": Stringent MSE cutoff: 25 percentile: moderate MSE cutoff:75 percentile(note: genes survived in 25 percentile also survived in 75 percentile)                                                 
+- "MSE_cutoff": 25 percentile is stringent cutoff while 75 percentile is moderate cutoff.                                         
 ''')),
             ]),
             dbc.CardBody([
