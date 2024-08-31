@@ -6,3 +6,5 @@
 *.bam
 *.bed 
 *.xlsx
+*.gff
+*.bw
