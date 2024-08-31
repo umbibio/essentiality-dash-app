@@ -435,7 +435,7 @@ def update_figure1(selected_genes):
         title_text='Gene level log2FC model by edgeR',
         title_x=0.5,
         xaxis_title='SetA_GNF_High_day15_edgeR_log2FC',
-        yaxis_title='SetA_GNF_High_day15_edgeR_log2FC',
+        yaxis_title='SetB_GNF_High_day15_edgeR_log2FC',
         legend=dict(
             title=None,
             orientation="v",
@@ -486,7 +486,7 @@ def update_figure(selected_genes):
                 x=selected_data['A_cv'],
                 y=selected_data['B_cv'],
                 mode='markers',
-                marker=dict(color='green', size=10),
+                marker=dict(color='green', size=12),
                 name='Selected Genes',
                 text = [
                     f"GeneID: {gene}<br>A_cv: {a_cv}<br>B_cv: {b_cv}<br>max.log2FC.edgeR: {log2fc}"
@@ -585,7 +585,7 @@ def update_figure2(selected_genes):
         title_text='Site level log2FC model',
         title_x=0.5,
         xaxis_title='SetA_GNF_High_day15_log2_mean_FC_sites',
-        yaxis_title='SetA_GNF_High_day15_log2_mean_FC_sites',
+        yaxis_title='SetB_GNF_High_day15_log2_mean_FC_sites',
          legend=dict(
             title=None,
             orientation="v",
@@ -653,8 +653,8 @@ def update_figure1_DHA(selected_genes):
     fig.update_layout(
         title_text='Gene level log2FC model by edgeR',
         title_x=0.5,
-        xaxis_title='SetA_GNF_High_day15_edgeR_log2FC',
-        yaxis_title='SetA_GNF_High_day15_edgeR_log2FC',
+        xaxis_title='SetA_DHA_High_day15_edgeR_log2FC',
+        yaxis_title='SetB_DHA_High_day15_edgeR_log2FC',
         legend=dict(
             title=None,
             orientation="v",
@@ -705,7 +705,7 @@ def update_figure_DHA(selected_genes):
                 x=selected_data['A_cv'],
                 y=selected_data['B_cv'],
                 mode='markers',
-                marker=dict(color='green', size=10),
+                marker=dict(color='green', size=12),
                 name='Selected Genes',
                 text = [
                     f"GeneID: {gene}<br>A_cv: {a_cv}<br>B_cv: {b_cv}<br>max.log2FC.edgeR: {log2fc}"
@@ -804,7 +804,7 @@ def update_figure2_DHA(selected_genes):
         title_text='Site level log2FC model',
         title_x=0.5,
         xaxis_title='SetA_GNF_High_day15_log2_mean_FC_sites',
-        yaxis_title='SetA_GNF_High_day15_log2_mean_FC_sites',
+        yaxis_title='SetB_GNF_High_day15_log2_mean_FC_sites',
          legend=dict(
             title=None,
             orientation="v",

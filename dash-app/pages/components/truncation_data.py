@@ -25,7 +25,7 @@ fig = px.scatter(
     color='log2_Total_CDS_length',
     color_continuous_scale=custom_color_scale,
     labels={'log2(Total.CDS.length)': 'log2(CDS.length)', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
-    title='F2S Plot'
+    # title='F2S Plot'
 )
 
 
@@ -70,11 +70,11 @@ fig = px.scatter(
 # Customize the plot layout
 fig.update_layout(
     template='simple_white',
-    title={
-        'text': 'F2S Plot',
-        'x': 0.4,  # Center title horizontally
-        'xanchor': 'center'  # Anchor title to center
-    },
+    # title={
+    #     'text': 'F2S Plot',
+    #     'x': 0.4,  # Center title horizontally
+    #     'xanchor': 'center'  # Anchor title to center
+    # },
     xaxis_title='Normalized CDS',
     yaxis_title='Mean squared error',
     legend_title=dict(text='log2(CDS.length)'),
@@ -106,11 +106,11 @@ fig.update_traces(
         )  # Border color
     )
 )
-fig.add_hline(y=0.3, line_width=5, line_dash="dash", line_color="orange", layer="above")
-fig.add_hline(y=0.09, line_width=5, line_dash="dash", line_color="black", layer="above")
+# fig.add_hline(y=0.3, line_width=5, line_dash="dash", line_color="orange", layer="above")
+# fig.add_hline(y=0.09, line_width=5, line_dash="dash", line_color="black", layer="above")
 
-fig.add_vline(x=0.1, line_width=5, line_dash="dash", line_color="red", layer="above")
-fig.add_vline(x=0.9, line_width=5, line_dash="dash", line_color="red", layer="above")
+# fig.add_vline(x=0.1, line_width=5, line_dash="dash", line_color="red", layer="above")
+# fig.add_vline(x=0.9, line_width=5, line_dash="dash", line_color="red", layer="above")
 
 
 s_states2_5p = pd.read_excel('assets/prime5truncatable_4021pcgenes.xlsx')
@@ -135,17 +135,17 @@ fig_5p = px.scatter(
     color='log2_Total_CDS_length',
     color_continuous_scale=custom_color_scale,
     labels={'log2(Total.CDS.length)': 'log2(CDS.length)', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
-    title='F2S Plot'
+    # title='F2S Plot'
 )
 
 # Customize the plot layout
 fig_5p.update_layout(
     template='simple_white',
-    title={
-        'text': 'F2S Plot',
-        'x': 0.4,  # Center title horizontally
-        'xanchor': 'center'  # Anchor title to center
-    },
+    # title={
+    #     'text': 'F2S Plot',
+    #     'x': 0.4,  # Center title horizontally
+    #     'xanchor': 'center'  # Anchor title to center
+    # },
     xaxis_title='Normalized CDS',
     yaxis_title='Mean squared error',
     legend_title=dict(text='log2(CDS.length)'),
@@ -178,8 +178,108 @@ fig_5p.update_traces(
     )
 )
 
-fig_5p.add_hline(y=0.3, line_width=5, line_dash="dash", line_color="orange", layer="above")
-fig.add_hline(y=0.09, line_width=5, line_dash="dash", line_color="black", layer="above")
+# fig_5p.add_hline(y=0.3, line_width=5, line_dash="dash", line_color="orange", layer="above")
+# fig.add_hline(y=0.09, line_width=5, line_dash="dash", line_color="black", layer="above")
 
-fig_5p.add_vline(x=0.1, line_width=5, line_dash="dash", line_color="red", layer="above")
-fig_5p.add_vline(x=0.9, line_width=5, line_dash="dash", line_color="red", layer="above")
+# fig_5p.add_vline(x=0.1, line_width=5, line_dash="dash", line_color="red", layer="above")
+# fig_5p.add_vline(x=0.9, line_width=5, line_dash="dash", line_color="red", layer="above")
+
+
+
+fig_HMS = px.scatter(
+    s_states2,
+    x='R_i',
+    y='min.val',
+    color='HMS',
+    color_continuous_scale=custom_color_scale,
+    labels={'HMS': 'HMS', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
+    # title='F2S Plot'
+)
+fig_HMS.update_layout(
+    template='simple_white',
+    # title={
+    #     'text': 'F2S Plot',
+    #     'x': 0.4,  # Center title horizontally
+    #     'xanchor': 'center'  # Anchor title to center
+    # },
+    xaxis_title='Normalized CDS',
+    yaxis_title='Mean squared error',
+    legend_title=dict(text='HMS'),
+    coloraxis_colorbar=dict(
+        title='HMS',
+       ticktext=['0.0', '0.5', '1.0',],
+        len=0.6
+    ),
+    xaxis=dict(
+        showgrid=False,  # Remove grid lines
+        zeroline=False   # Remove zero line
+    ),
+    yaxis=dict(
+        showgrid=False,  # Remove grid lines
+        zeroline=False   # Remove zero line
+    ),
+    # margin=dict(l=40, r=40, t=40, b=40),  # Adjust margins if needed
+    plot_bgcolor='white',  # Background color of the plot area
+    # paper_bgcolor='white', # Background color of the entire figure
+                       width=500, 
+            height=550
+)
+fig_HMS.update_traces(
+    marker=dict(
+        size=8,  # Marker size
+        line=dict(
+            width=1,  # Border width
+            color='black'  # Border color
+        )  # Border color
+    )
+)
+
+fig_5p_HMS = px.scatter(
+    s_states2_5p,
+    x='R_i',
+    y='min.val',
+    color='HMS',
+    color_continuous_scale=custom_color_scale,
+    labels={'HMS': 'HMS', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
+    # title='F2S Plot'
+)
+
+# Customize the plot layout
+fig_5p_HMS.update_layout(
+    template='simple_white',
+    # title={
+    #     'text': 'F2S Plot',
+    #     'x': 0.4,  # Center title horizontally
+    #     'xanchor': 'center'  # Anchor title to center
+    # },
+    xaxis_title='Normalized CDS',
+    yaxis_title='Mean squared error',
+    legend_title=dict(text='HMS'),
+    coloraxis_colorbar=dict(
+        title='HMS',
+        ticktext=['0.0', '0.5', '1.0',],
+        len=0.6
+    ),
+    xaxis=dict(
+        showgrid=False,  # Remove grid lines
+        zeroline=False   # Remove zero line
+    ),
+    yaxis=dict(
+        showgrid=False,  # Remove grid lines
+        zeroline=False   # Remove zero line
+    ),
+    # margin=dict(l=40, r=40, t=40, b=40),  # Adjust margins if needed
+    plot_bgcolor='white',  # Background color of the plot area
+    # paper_bgcolor='white', # Background color of the entire figure
+                  width=500, 
+            height=550
+)
+fig_5p_HMS.update_traces(
+    marker=dict(
+        size=8,  # Marker size
+        line=dict(
+            width=1,  # Border width
+            color='black'  # Border color
+        )  # Border color
+    )
+)

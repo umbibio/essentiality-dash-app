@@ -225,6 +225,38 @@ This page is to explore the truncatable genes in P.knowlesi. The raw reads of in
       class_name="mb-3 2"  )
     ],class_name="mb-3" ),
        
+           dbc.Row([
+        dbc.Col(
+             dbc.Card(
+        dbc.CardBody([
+               dbc.CardHeader(html.H6(" 3' truncation",style={
+                        'font-weight': 'bold',  # Makes the text bold
+                        'text-align': 'center'  # Centers the text
+                    }),className="rounded-3"),
+                dcc.Graph(
+                id='scatter-plot-trunc_HMS',
+                figure=td.fig,
+            ),
+            
+        ])
+    ),
+      class_name="mb-3 2"  ),
+        dbc.Col(
+             dbc.Card(
+        dbc.CardBody([
+            dbc.CardHeader(html.H6(" 5' truncation" ,style={
+                        'font-weight': 'bold',  # Makes the text bold
+                        'text-align': 'center'  # Centers the text
+                    }),className="rounded-3"),
+                dcc.Graph(
+                id='scatter-plot-trunc_5p_HMS',
+                figure=td.fig,
+            ),
+            
+        ])
+    ),
+      class_name="mb-3 2"  )
+    ],class_name="mb-3" ),
             ]
 
 

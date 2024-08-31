@@ -57,7 +57,7 @@ tracks =[
                     'height': 100,
                     'color': 'rgb(0,0,255)'
                 },
-                 {
+                {
                     'name': 'lncRNA',
                     'url': app.get_asset_url('PkH_RABT_guided_864lncRNA_2.gtf'),
                     'displayMode': 'EXPANDED',
@@ -180,8 +180,11 @@ def update_info_tables(page, page_size, geneid_filter1,list,upload_clicks,descri
         if geneid_filter1 :
            df = df.loc[df['GeneIDPkH'].str.lower().str.contains(geneid_filter1.lower(),na=False)]
         if upload_clicks:
+         print(upload_clicks)
          gene_ids_list = list.split(',')
-         df = df.loc[df['GeneIDPkH'].str.lower().isin([gene_id.lower() for gene_id in gene_ids_list])]
+         gene_ids_list = [gene_id.strip().lower() for gene_id in gene_ids_list]
+         print(gene_ids_list)
+         df = df.loc[df['GeneIDPkH'].str.lower().isin(gene_ids_list)]
     if description_filter:
      df = df.loc[df['Product_Description'].str.lower().str.contains(description_filter.lower(),na=False)]
     if symbol_filter:
@@ -262,8 +265,9 @@ def update_selected_rows_style(id, data):
     Output('igv-container', 'children'),
     Input('network-nodes-table', 'children'),
     Input('selected-network-nodes', 'data'),
+    Input('enter-gene-id', 'data'),
 )
-def update_igv_locus(table, selected_cells): 
+def update_igv_locus(table, selected_cells,window_gene): 
     """
     Callback to update the IGV container based on selected network nodes.
 
@@ -286,6 +290,20 @@ def update_igv_locus(table, selected_cells):
         return [
             dashbio.Igv(
                 locus=genome_name,
+                reference={
+                    'id': "Id",
+                    'name': "PKHN",
+                    'fastaURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta'),
+                    'indexURL': app.get_asset_url('PlasmoDB-58_PknowlesiH_Genome.fasta.fai'),
+                    'order': 1000000,
+                    'tracks': tracks
+                }
+            )
+        ]
+    elif window_gene:
+               return [
+            dashbio.Igv(
+                locus=window_gene,
                 reference={
                     'id': "Id",
                     'name': "PKHN",

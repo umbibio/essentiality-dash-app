@@ -219,6 +219,13 @@ body = [
     html.Br(),
     html.Br(),
     # dbc.Card(dcc.Loading(id='igv-container')),
+    dbc.Card({
+        dbc.Row([
+            dbc.Col(html.Small("To navigate to a specific region by geneID:Input the geneID into the search bar, and the browser will automatically zoom into and display the corresponding genomic region.")),
+            
+]),dbc.Col(dcc.Textarea(id='enter-gene-id',rows=10, placeholder='Enter GeneId here'),),
+  dbc.Col(html.Small( "To navigate to a specific region by genomic range:Input the genomic range such as PKNH_01_v2:1000-2000 into the genomic range bar in IGV, and the browser will automatically zoom into and display the corresponding genomic region."))
+    }),
       dbc.Card( dbc.CardBody(
         id='igv-container',
         children=[
