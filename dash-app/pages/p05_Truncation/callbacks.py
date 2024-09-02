@@ -637,3 +637,146 @@ def update_scatter_plot(selected_cells,table):
      fig = td.fig_5p
 
     return fig    
+
+
+@app.callback(
+    Output('scatter-plot-trunc_HMS', 'figure'),
+    Input('selected-network-nodes-trunc', 'data'),
+    Input('network-nodes-table-trunc', 'children')
+)
+def update_scatter_plot(selected_cells,table):
+    # Convert input geneids to a list
+    if selected_cells:
+     selected_index = selected_cells[0]
+     row = table[0]['props']['children'][selected_index]['props']['children']
+     gene = row[0]
+     gene_name = gene['props']['children']
+    #  geneid_list = [geneid.strip() for geneid in gene_name.split(',')]
+    # else:
+    #     geneid_list = []
+
+    # Define colors based on whether the gene is in the geneid_list
+     td.s_states2['color'] = td.s_states2['GeneID'].apply(lambda x: 'red' if x in gene_name else 'grey')
+
+     fig = px.scatter(
+        td.s_states2,
+        x='R_i',
+        y='min.val',
+        color='color',
+        hover_data={'GeneID': True,'color':False},
+        color_discrete_map={'red': 'red', 'grey': 'grey'},
+        labels={'HMS': 'HMS', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
+        title=''
+    )
+
+    #  fig.add_hline(y=0.3, line_width=5, line_dash="dash", line_color="yellow", layer="above")
+    #  fig.add_hline(y=0.09, line_width=5, line_dash="dash", line_color="black", layer="above")
+
+    #  fig.add_vline(x=0.1, line_width=5, line_dash="dash", line_color="red", layer="above")
+    #  fig.add_vline(x=0.9, line_width=5, line_dash="dash", line_color="red", layer="above")
+
+     fig.update_layout(
+        template='simple_white',
+        # title={
+        #     'text': 'F2S Plot',
+        #     'x': 0.4,
+        #     'xanchor': 'center'
+        # },
+        xaxis_title='Normalized CDS',
+        yaxis_title='Mean squared error',
+        coloraxis_showscale=False,
+        legend=dict(title=None),
+        xaxis=dict(showgrid=False, zeroline=False),
+        yaxis=dict(showgrid=False, zeroline=False),
+        # plot_bgcolor='white',
+            width=500, 
+            height=550
+    )
+
+     fig.update_traces(
+        marker=dict(
+            size=8,
+            line=dict(width=1, color='black')
+        )
+    )
+     for trace in fig.data:
+      if trace.name == 'grey':
+        trace.showlegend = False
+      elif trace.name == 'red':
+        trace.marker.size = 10  # Make red dots larger
+        trace.name = gene_name  # Update legend label
+    else: 
+     fig = td.fig_HMS
+
+    return fig    
+
+@app.callback(
+    Output('scatter-plot-trunc_5p_HMS', 'figure'),
+    Input('selected-network-nodes-trunc', 'data'),
+    Input('network-nodes-table-trunc', 'children')
+)
+def update_scatter_plot(selected_cells,table):
+    # Convert input geneids to a list
+    if selected_cells:
+     selected_index = selected_cells[0]
+     row = table[0]['props']['children'][selected_index]['props']['children']
+     gene = row[0]
+     gene_name = gene['props']['children']
+    #  geneid_list = [geneid.strip() for geneid in gene_name.split(',')]
+    # else:
+    #     geneid_list = []
+
+    # Define colors based on whether the gene is in the geneid_list
+     td.s_states2_5p['color'] = td.s_states2_5p['GeneID'].apply(lambda x: 'red' if x in gene_name else 'grey')
+
+     fig = px.scatter(
+        td.s_states2_5p,
+        x='R_i',
+        y='min.val',
+        color='color',
+        hover_data={'GeneID': True,'color':False},
+        color_discrete_map={'red': 'red', 'grey': 'grey'},
+        labels={'HMS': 'HMS', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
+        title=''
+    )
+
+    #  fig.add_hline(y=0.3, line_width=5, line_dash="dash", line_color="yellow", layer="above")
+    #  fig.add_hline(y=0.09, line_width=5, line_dash="dash", line_color="black", layer="above")
+
+    #  fig.add_vline(x=0.1, line_width=5, line_dash="dash", line_color="red", layer="above")
+    #  fig.add_vline(x=0.9, line_width=5, line_dash="dash", line_color="red", layer="above")
+
+     fig.update_layout(
+        template='simple_white',
+        # title={
+        #     'text': 'F2S Plot',
+        #     'x': 0.4,
+        #     'xanchor': 'center'
+        # },
+        xaxis_title='Normalized CDS',
+        yaxis_title='Mean squared error',
+        coloraxis_showscale=False,
+        legend=dict(title=None),
+        xaxis=dict(showgrid=False, zeroline=False),
+        yaxis=dict(showgrid=False, zeroline=False),
+        # plot_bgcolor='white',
+            width=500, 
+            height=550
+    )
+
+     fig.update_traces(
+        marker=dict(
+            size=8,
+            line=dict(width=1, color='black')
+        )
+    )
+     for trace in fig.data:
+      if trace.name == 'grey':
+        trace.showlegend = False
+      elif trace.name == 'red':
+        trace.marker.size = 10  # Make red dots larger
+        trace.name = gene_name  # Update legend label
+    else: 
+     fig = td.fig_5p_HMS
+
+    return fig    

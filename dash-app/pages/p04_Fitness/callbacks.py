@@ -344,7 +344,7 @@ def update_scatter_plot(selected_cells,table):
   ))
          fig.add_trace(go.Scatter(
             x=gene_df['HMS'], y=gene_df['MFS.slope'],
-            mode='markers', marker=dict(color='#13B187', ), name=gene_name,
+            mode='markers', marker=dict(color='#13B187',size=14 ), name=gene_name,
             hoverinfo='text',  # Show text on hover
             text=gene_df['geneID'] + '<br>' +  
                  'HMS: ' + gene_df['HMS'].astype(str) + '<br>' +  
@@ -377,16 +377,16 @@ def update_scatter_plot(selected_cells,table):
        margin=dict(l=0, r=0, t=30, b=0),
        plot_bgcolor='white',
        legend_title_text=None,
-       font=dict(color='black'),  # Update axis and label font properties
+       font=dict(color='black',size=14),  # Update axis and label font properties
        yaxis=dict(tickfont=dict(color='black')),
         legend=dict(
         bgcolor='rgba(0,0,0,0)',
         # font=dict(size=14),  # Update legend font size
-        x=1.02,  # Position the legend to the extreme right
+        x=1,  # Position the legend to the extreme right
         y=1,     # Adjust the y position to be at the top
         xanchor='left',  # Ensure the legend aligns to the right edge of the plot
         yanchor='top',
-        font={'color':"black"}
+        font={'color':"black",'size':16}
     )
        )
     else:
@@ -398,27 +398,56 @@ def update_scatter_plot(selected_cells,table):
 Output('trending-plot-container', 'children'),
 [    Input('selected-network-nodes-ft', 'data'),
     Input('network-nodes-table-ft', 'children'),
-      Input('gene-list-store-ft','data'), ],
+      Input('gene-list-store-trending-ft','data'), ],
 )
 def trending_plot(input_gene_list,table,uploaded):
-    if not input_gene_list and not uploaded :
-      figures=fdata.trendingPlot(fdata.Input_gene_list) 
-    elif input_gene_list:
+    print("uploaded entered",uploaded)
+    # if uploaded is not None and isinstance(uploaded, str):
+    #     uploaded = [gene.strip() for gene in uploaded.split(',') if gene.strip()]
+    #     print("Processed uploaded data:", uploaded)
+    # if not input_gene_list and uploaded:
+    #   print("condition of not met")
+    #   figures=fdata.figures
+    if input_gene_list:
+        print("condition of table met")
         selected_index = int(input_gene_list[0]) 
         row = table[0]['props']['children'][selected_index]['props']['children']
         gene = row[0]
         gene_name_elements = gene['props']['children']
-        if isinstance(gene_name_elements, list):
-            gene_name = ''.join(gene_name_elements)
-        else:
-            gene_name = gene_name_elements
-        figures=fdata.trendingPlot([gene_name])
-    elif uploaded : 
-      if isinstance(input_gene_list, str):
-          input_gene_list = [gene.strip() for gene in input_gene_list.split(',') if gene.strip()]
-          figures= fdata.trendingPlot(input_gene_list)
+        print(gene_name_elements)
+        # if isinstance(gene_name_elements, list):
+        #     gene_name = ''.join(gene_name_elements)
+        # else:
+        gene_name = [gene_name_elements]
+        print(gene_name)
+        figures=fdata.trendingPlot(gene_name)
+        print("table figures rendered")
+    if uploaded : 
+      print("condition of upload met")
+      print("Processing uploaded data:",uploaded)
+      if isinstance(uploaded, str):
+          uploaded = [gene.strip() for gene in uploaded.split(',') if gene.strip()]
+          figures= fdata.trendingPlot(uploaded)
+          print("uploaded figures rendered")
+    else:
+      print("condition of else met")
+      figures=fdata.figures
     
-    graph_columns = [dbc.Col(dcc.Graph(id=f'trending-plot-ft-{i}', figure=fig)) for i, fig in enumerate(figures)]
+    if len(figures) == 1:
+          graph_columns = [dbc.Col(dcc.Graph(id=f'trending-plot-ft-{i}', figure=fig,style = {'height': '500px', 'width': '500px'})) for i, fig in enumerate(figures)]
+            # style = {'height': '500px', 'width': '500px'}
+    else:
+        graph_columns = [dbc.Col(dcc.Graph(id=f'trending-plot-ft-{i}', figure=fig,style = {'height': 'auto', 'width': 'auto'})) for i, fig in enumerate(figures)]
+            # style = {'height': 'auto', 'width': 'auto'}
+        #     graph_columns.append(
+        #     dbc.Col(
+        #         dcc.Graph(
+        #             id=f'trending-plot-ft-{i}',
+        #             figure=fig,
+        #             style=style
+        #         )
+        #     )
+        # )
 
     return graph_columns
    
@@ -497,4 +526,127 @@ def update_download_button(n_clicks, geneid_filter1,gene_list,upload_clicks,desc
      csv_string = df.to_csv(index=False, encoding='utf-8')
      return dict(content=csv_string, filename=f"datatable.csv")
 
+
+@app.callback(
+    Output('upload-modal-ft_trnd', 'is_open'),
+    [Input('open-modal-button-ft_trnd', 'n_clicks'),Input('upload-modal-button-ft_trnd', 'n_clicks'),],
+    [State('upload-modal-ft_trnd', 'is_open')]
+)
+def toggle_modal_tr(open_clicks,upload_clicks,is_open):
+    """
+    Callback to toggle the upload modal.
+
+    Parameters:
+        - open_clicks: Number of clicks on the open modal button.
+        - upload_clicks: Number of clicks on the upload modal button.
+        - is_open: Current state of the upload modal.
+
+    Returns:
+        bool: Updated state of the upload modal.
+    """
+    print("Callback triggered")
+    if open_clicks or upload_clicks :
+        print("Toggling modal")
+        return not is_open
+    print("togal work")
+    return is_open
+
+@app.callback(
+   Output('copy-paste-gene-list-ft_trnd', 'value'),
+   Input('clear-button-ft_trnd', 'n_clicks'),
+)
+def clear_list_tr(n):
+   """
+    Callback to clear the copy-paste gene list input.
+
+    Parameters:
+        - n: Number of clicks on the 'Clear' button.
+
+    Returns:
+        str: Empty string to clear the input field.
+    """
+   if n :
+      print("clear list work")
+      return ''
+@app.callback(
+    Output('clear-button-ft_trnd', 'n_clicks'),
+    Input('upload-modal-button-ft_trnd', 'n_clicks'), 
+    prevent_initial_call=True,  
+)
+def reset_n_clicks_tr(n):
+    """
+    Callback to reset the 'Clear' button clicks.
+
+    Parameters:
+        - n: Number of clicks on the upload modal button.
+
+    Returns:
+        None: Resets the 'Clear' button clicks.
+    """
+    return None
+   
+@app.callback(
+    Output('gene-list-store-trending-ft','data'),
+    Input('upload-gene-list-ft_trnd', 'contents'),
+    State('upload-gene-list-ft_trnd', 'filename'),
+    Input('copy-paste-gene-list-ft_trnd', 'value'),
+    Input('upload-modal-button-ft_trnd', 'n_clicks'), 
+    Input('clear-button-ft_trnd', 'n_clicks'), 
+    prevent_initial_call=True,
+)
+def update_manual_entry_from_upload_tr(contents, filename, copy_paste_value, upload_clicks,clear):
+    """
+    Callback to update the gene list from file upload or copy-paste.
+
+    Parameters:
+        - contents: Contents of the uploaded file.
+        - filename: Name of the uploaded file.
+        - copy_paste_value: Value from the copy-paste input field.
+        - upload_clicks: Number of clicks on the upload button.
+        - clear: Number of clicks on the clear button.
+
+    Returns:
+        str: Updated gene list for filtering.
+    """
+    if upload_clicks is None:
+        raise PreventUpdate
+    
+    if contents is not None and upload_clicks and not clear:
+        _, file_extension = os.path.splitext(filename)
+
+        if file_extension.lower() not in ['.csv', '.txt']:
+              raise Exception('Unsupported file format')
+
+        content_type, content_string = contents.split(',')  
+        decoded = base64.b64decode(content_string)
+
+        try:
+            if file_extension.lower() == '.csv':
+                df = pd.read_csv(io.StringIO(decoded.decode('utf-8'), observed=False))
+            elif file_extension.lower() == '.txt':
+                df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), header=None, delimiter=',', observed=False)
+
+                if df.shape[1] == 1:
+                    # If there's only one column, use its values as the filter value
+                    filter_value = ','.join(df.iloc[:, 0].astype(str).tolist())
+                else:
+                    # If there are multiple columns, use the first row as column names
+                    df.columns = [f'Column_{i}' for i in range(df.shape[1])]
+                    filter_value = ','.join(df.iloc[0].astype(str).tolist())
+            else:
+                raise Exception('Unsupported file format')
+
+            return filter_value
+
+        except Exception as e:
+            print(f"Error in update_manual_entry_from_upload: {e}")
+            return ''
+    elif copy_paste_value and upload_clicks and not clear:
+        print("copy paste list work")
+        return copy_paste_value.strip()
+    if clear:
+       return ""
+    else:
+        raise PreventUpdate
+    
 

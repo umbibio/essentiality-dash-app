@@ -68,7 +68,7 @@ body = [
     dbc.Row([dbc.Col([
         dbc.Card([
             dbc.CardHeader([
-                html.H6('To select or deselect a gene by clicking on a row in the table below'), html.Small(dcc.Markdown('''                 
+                html.H6('Select or deselect a gene by clicking on a row in the table below'), html.Small(dcc.Markdown('''                 
 - “geneID”: The unique PlasmoDB gene identifier.
 - “Product.Description”: PlasmoDB gene product description corresponding to the gene accession.
 - “TTAA”: The total number of TTAA within the CDS of the gene.
@@ -162,24 +162,57 @@ body = [
     dbc.Button("Download Table", id="download-button-ft",n_clicks=0),
     html.Br(),
     html.Br(),
-     dbc.Card( dbc.CardBody([
+     dbc.Card([
+         dbc.CardHeader([html.H6("Red vertical dash line: essential group cutoff(HMS=0.26)",),
+                                html.H6("Blue vertical dash line: dispensable group cutoff(HMS=0.88)"),
+                                html.H6("Orange horizontal dash line: low fitness with high confidence cutoff"), 
+                               html.H6( "Pink horizontal dash line: fast fitness with high confidence cutoff")]),
+         dbc.CardBody([
             dcc.Graph(
                 id='scatter-plot-ft',
                 figure=fdata.fig,
             ),
-            ]),class_name="mb-3",
-     ),
-     dcc.Store(id='gene-list-store-trending-ft', data=("PKNH_0621300","PKNH_0722900",
-              )),
+            ]),
+],class_name="mb-3",),
+     dcc.Store(id='gene-list-store-trending-ft', data={}),
     dbc.Card([
             dbc.CardHeader(html.H4('Trending Plot'),),
+            dbc.CardBody([ dbc.Row([
+        dbc.Col([
+            dbc.Modal([
+                dbc.ModalHeader("Upload Gene List"),
+                dbc.ModalBody([
+                    dcc.Markdown("Please upload a .txt or .csv file with comma-separated GeneIds."),
+                    dcc.Upload(
+                        id='upload-gene-list-ft_trnd',
+                        children=dbc.Button('Upload Gene List'),
+                        multiple=False
+                    ),
+                    html.Hr(),
+                    dcc.Markdown("Or copy and paste the comma seperated gene list below:"),
+                    dcc.Textarea(id='copy-paste-gene-list-ft_trnd',rows=10, placeholder='Paste GeneIds here'),
+                ]),
+                dbc.ModalFooter([
+                    dbc.Button("Upload", id="upload-modal-button-ft_trnd", color="primary"),
+                ]),
+            ],
+                id="upload-modal-ft_trnd",
+                is_open=False,
+            ),
+            dbc.Button("Upload gene list", id="open-modal-button-ft_trnd"),
+        ]),
+  
+    dbc.Col([
+        dbc.Button("Clear gene list", id="clear-button-ft_trnd"),
+    ])
+      ],className="mt-2 mb-2"),
             dbc.Row([
             dbc.Row(id='trending-plot-container')]
-            ),
-            dbc.Row([ dcc.Graph(
-                id='trending-plot1',
-                figure={},
             ),])
+            # dbc.Row([ dcc.Graph(
+            #     id='trending-plot1',
+            #     figure=fdata.figures,
+            # ),])
             ]),
 ]
 

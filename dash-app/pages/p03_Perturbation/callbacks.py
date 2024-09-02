@@ -535,7 +535,10 @@ def update_figure(selected_genes):
             yanchor="top",
             y=0.99,
             xanchor="right",
-            x=0.99
+            x=0.99,
+            font=dict(
+                    size=16 
+                )
         ),
         plot_bgcolor='white',
         font={'color':"black"}
@@ -745,8 +748,8 @@ def update_figure_DHA(selected_genes):
         fig.update_layout(
         title_text='CV inverse model',
         title_x=0.5,
-        xaxis_title='SetA_GNF_High_day15_cv_inverse',
-        yaxis_title='SetB_GNF_High_day15_inverse',
+        xaxis_title='SetA_DHA_High_day15_cv_inverse',
+        yaxis_title='SetB_DHA_High_day15_inverse',
         # showlegend=False,
        legend=dict(
             title=None,
@@ -754,7 +757,10 @@ def update_figure_DHA(selected_genes):
             yanchor="top",
             y=0.99,
             xanchor="right",
-            x=0.99
+            x=0.99,
+            font=dict(
+                    size=16 
+                )
         ),
         plot_bgcolor='white',
         font={'color':"black"}
@@ -803,8 +809,8 @@ def update_figure2_DHA(selected_genes):
     fig.update_layout(
         title_text='Site level log2FC model',
         title_x=0.5,
-        xaxis_title='SetA_GNF_High_day15_log2_mean_FC_sites',
-        yaxis_title='SetB_GNF_High_day15_log2_mean_FC_sites',
+        xaxis_title='SetA_DHA_High_day15_log2_mean_FC_sites',
+        yaxis_title='SetB_DHA_High_day15_log2_mean_FC_sites',
          legend=dict(
             title=None,
             orientation="v",

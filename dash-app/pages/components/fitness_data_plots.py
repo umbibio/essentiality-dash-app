@@ -102,7 +102,7 @@ fig.update_layout(
     #     x=0.6, y=0.4
     # ),
     margin=dict(l=0, r=0, t=30, b=0),
-    font=dict(color='black'),  # Update axis and label font properties
+    font=dict(color='black',size=14),  # Update axis and label font properties
     yaxis=dict(tickfont=dict(color='black'))
 )
 
@@ -121,7 +121,7 @@ fig.update_layout(
         y=1,     # Adjust the y position to be at the top
         xanchor='left',  # Ensure the legend aligns to the right edge of the plot
         yanchor='top',
-        font={'color':"black"}
+          font={'color':"black",'size': 16}
     )
 )
 
@@ -165,7 +165,7 @@ def trendingPlot(input_gene_list):
             x=1, y=1,
             showarrow=False,
             align='right',
-            font=dict(color="black"),
+            font=dict(color="black",size=12),
             # bordercolor="black", borderwidth=1
         )
 
@@ -186,12 +186,12 @@ def trendingPlot(input_gene_list):
             yaxis_title="MFS",
             title=dict(text=f"{geneName}", x=0.5),
             legend_title_text=None,
-            font={'color':"black"}
+            font={'color':"black",'size':13}
         )
         
         figures.append(fig2)
-        print(f"Figure for gene: {geneName}")
-        print("Data:", fig2.data)  # Print data traces
-        print("Layout:", fig2.layout)  # Print layout details
-        print("Annotations:", fig2.layout.annotations)  # Print annotations if any
+        print(f"Total number of figures rendered: {len(figures)}")
     return figures
+
+figures=trendingPlot(Input_gene_list)
+print(f"Total number of figures rendered outside of function: {len(figures)}")

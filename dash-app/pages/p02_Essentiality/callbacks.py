@@ -42,7 +42,7 @@ data[columns_to_round] = data[columns_to_round].round(3)
 # Define tracks for visualization in the IGV component
 tracks =[
                 {
-                    'name': 'TTAA Track',
+                    'name': 'Insertion coverage',
                     'url': app.get_asset_url('75Pk_20231022_TTAA.sorted.bam'),
                     'indexURL': app.get_asset_url('75Pk_20231022_TTAA.sorted.bai'),
                     'displayMode': 'EXPANDED',
@@ -52,10 +52,17 @@ tracks =[
                 },
                 {
                     'name': 'Coding Genes',
-                    'url': app.get_asset_url('PlasmoDB-58_PknowlesiH.gtf'),
+                    'url': app.get_asset_url('PlasmoDB-58_PknowlesiH.gff'),
                     'displayMode': 'EXPANDED',
                     'height': 100,
                     'color': 'rgb(0,0,255)'
+                },
+                {
+                    'name': 'YH1 strain genome coverage',
+                    'url': app.get_asset_url('PkH_YH1.bw'),
+                    'displayMode': 'EXPANDED',
+                    'height': 100,
+                    'color': 'rgb(56, 83, 54)'
                 },
                 {
                     'name': 'lncRNA',
@@ -265,7 +272,7 @@ def update_selected_rows_style(id, data):
     Output('igv-container', 'children'),
     Input('network-nodes-table', 'children'),
     Input('selected-network-nodes', 'data'),
-    Input('enter-gene-id', 'data'),
+    Input('enter-gene-id', 'value'),
 )
 def update_igv_locus(table, selected_cells,window_gene): 
     """
@@ -301,9 +308,10 @@ def update_igv_locus(table, selected_cells,window_gene):
             )
         ]
     elif window_gene:
+               name=gene_to_genome.get(window_gene)
                return [
             dashbio.Igv(
-                locus=window_gene,
+                locus=name,
                 reference={
                     'id': "Id",
                     'name': "PKHN",

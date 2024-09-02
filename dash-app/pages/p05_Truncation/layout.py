@@ -89,7 +89,7 @@ This page is to explore the truncatable genes in P.knowlesi. The raw reads of in
     dbc.Row([dbc.Col([
         dbc.Card([
             dbc.CardHeader([
-                html.H6('To select or deselect a gene by clicking on a row in the table below'),html.Small(dcc.Markdown('''                                           
+                html.H6('Select or deselect a gene by clicking on a row in the table below'),html.Small(dcc.Markdown('''                                           
 - “GeneID”: The unique PlasmoDB gene identifier.                                                 
 - “Product.Description”: PlasmoDB gene product description corresponding to the gene accession.                                                  
 - “Symbol”: Gene name or symbol from PlasmoDB.                                                

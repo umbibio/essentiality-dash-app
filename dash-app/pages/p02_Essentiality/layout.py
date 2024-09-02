@@ -78,7 +78,7 @@ genome_list = genome(gene_to_genome)
 # Define tracks for IGV component
 tracks =[
                 {
-                    'name': 'TTAA Track',
+                    'name': 'Insertion coverage',
                     'url': app.get_asset_url('75Pk_20231022_TTAA.sorted.bam'),
                     'indexURL': app.get_asset_url('75Pk_20231022_TTAA.sorted.bai'),
                     'displayMode': 'EXPANDED',
@@ -88,10 +88,17 @@ tracks =[
                 },
                 {
                     'name': 'Coding Genes',
-                    'url': app.get_asset_url('PlasmoDB-58_PknowlesiH.gtf'),
+                    'url': app.get_asset_url('PlasmoDB-58_PknowlesiH.gff'),
                     'displayMode': 'EXPANDED',
                     'height': 100,
                     'color': 'rgb(0,0,255)'
+                },
+                {
+                    'name': 'YH1 strain genome coverage',
+                    'url': app.get_asset_url('PkH_YH1.bw'),
+                    # 'displayMode': 'EXPANDED',
+                    'height': 100,
+                    'color': 'rgb(56, 83, 54)'
                 },
                 {
                     'name': 'lncRNA',
@@ -118,7 +125,7 @@ body = [
     dbc.Row([dbc.Col([
         dbc.Card([
             dbc.CardHeader([
-                html.H6('To select or deselect a gene or lncRNA by clicking on a row in the table below'),html.Small(dcc.Markdown('''                                             
+                html.H6('Select or deselect a gene or lncRNA by clicking on a row in the table below'),html.Small(dcc.Markdown('''                                             
 - “GeneID”: The unique PlasmoDB gene identifier.                                                 
 - “Product.Description”: PlasmoDB gene product description corresponding to the gene accession.                                                  
 - “Symbol”: Gene name or symbol from PlasmoDB.                                                
@@ -216,13 +223,13 @@ body = [
     html.Br(),
     html.Br(),
     # dbc.Card(dcc.Loading(id='igv-container')),
-    dbc.Card({
-        dbc.Row([
-            dbc.Col(html.Small("To navigate to a specific region by geneID:Input the geneID into the search bar, and the browser will automatically zoom into and display the corresponding genomic region.")),
+    dbc.Card([
+        dbc.CardBody([dbc.Row([
+            dbc.Col(html.Small("• To navigate to a specific region by geneID:Input the geneID into the search bar below , and the browser will automatically zoom into and display the corresponding genomic region."),className="mb-2"),
             
-]),dbc.Col(dcc.Textarea(id='enter-gene-id',rows=10, placeholder='Enter GeneId here'),),
-  dbc.Col(html.Small( "To navigate to a specific region by genomic range:Input the genomic range such as PKNH_01_v2:1000-2000 into the genomic range bar in IGV, and the browser will automatically zoom into and display the corresponding genomic region."))
-    }),
+]),dbc.Col(dcc.Input(id='enter-gene-id', placeholder='Enter GeneId here',size='sm'),className="mb-2",style={'marginLeft': '15px'}),
+  dbc.Col(html.Small( "• To navigate to a specific region by genomic range:Input the genomic range such as PKNH_01_v2:1000-2000 into the genomic range bar in IGV window below, and the browser will automatically zoom into and display the corresponding genomic region."),className="mb-1")])
+],class_name="rounded mb-2"),
       dbc.Card( dbc.CardBody(
         id='igv-container',
         children=[
