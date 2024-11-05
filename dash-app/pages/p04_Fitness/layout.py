@@ -52,7 +52,7 @@ filter_inputs = {
 # Define table columns
 table_columns = [
     {"id": "geneID", "name": "GeneID", "editable": False,'header_style': {'width': '15%', }, 'style': {'width': '15%', }},
-    {"id": "Product.Description", "name": "Product_Description", "editable": False,'header_style': {'width': '25%', }, 'style': {'width': '25%', }},
+    {"id": "Product.Description", "name": "Product.Description", "editable": False,'header_style': {'width': '25%', }, 'style': {'width': '25%', }},
     {"id": "Symbol", "name": "Symbol", "editable": False,'header_style': {'width': '15%', }, 'style': {'width': '15%', }},
     {"id": "MFS.slope", "name": "FIS", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
     {"id": "lm.p.value", "name": "lm.p.value", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
