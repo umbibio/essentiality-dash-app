@@ -188,7 +188,15 @@ This page is to explore the truncatable genes in P.knowlesi. The raw reads of in
     dbc.Button("Download Table", id="download-button-trunc",n_clicks=0),
     html.Br(),
         html.Br(),
-
+             
+    ####Add a dbc.Card(box) to explain the interactive figures
+    dbc.Card([
+        dbc.CardBody([dbc.Row([
+            dbc.Col(dcc.Markdown("These plots are to show if there are CDS length bias when fitting the truncation model and the goodness of fit for specific gene of interest comparing to the whole gene population. By clicking the gene of interest in the table above, the smaller the 'Mean squared error' (Y-axis)  of the gene is, the higher confidence of the truncatability of the gene being called. 'Normalized CDS' (X-axis) indicates the relative location of truncatability identified by the truncation model."),className="mb-1 mt-1"),
+]),
+  dbc.Col(html.Small(""),className="mb-1")])
+    ],class_name="rounded mb-2"),
+             
     dbc.Row([
         dbc.Col(
              dbc.Card(
@@ -221,6 +229,13 @@ This page is to explore the truncatable genes in P.knowlesi. The raw reads of in
     ),
       class_name="mb-3 2"  )
     ],class_name="mb-3" ),
+
+    dbc.Card([
+        dbc.CardBody([dbc.Row([
+            dbc.Col(dcc.Markdown("These plots are to show if HMS score can indicate the goodness of fit of truncation models, the figure indicates those genes being identified as 'truncatable' with high confidence(locating at bottom) were more inclined to be called as 'essential'.  By clicking the gene of interest in the table above, the smaller the 'Mean squared error' (Y-axis)  of the gene is, the higher confidence of the truncatability of the gene being called. 'Normalized CDS' (X-axis) indicates the relative location of truncatability identified by the truncation model."),className="mb-1 mt-1"),
+]),
+  dbc.Col(html.Small(""),className="mb-1")])
+    ],class_name="rounded mb-2"),
        
            dbc.Row([
         dbc.Col(
