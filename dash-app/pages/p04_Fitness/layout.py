@@ -165,8 +165,8 @@ body = [
      dbc.Card([
          dbc.CardHeader([html.H6("Red vertical dash line: essential group cutoff(HMS=0.26)",),
                                 html.H6("Blue vertical dash line: dispensable group cutoff(HMS=0.88)"),
-                                html.H6("Orange horizontal dash line: low fitness with high confidence cutoff"), 
-                               html.H6( "Pink horizontal dash line: fast fitness with high confidence cutoff")]),
+                                html.H6("Orange dots: gene has low fitness with high confidence"), 
+                               html.H6( "Pink dots: gene has high fitness with high confidence")]),
          dbc.CardBody([
             dcc.Graph(
                 id='scatter-plot-ft',
