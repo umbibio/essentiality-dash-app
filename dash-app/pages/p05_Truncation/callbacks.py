@@ -521,7 +521,7 @@ def update_scatter_plot(selected_cells,table):
         y='min.val',
         color='color',
         hover_data={'GeneID': True,'color':False},
-        color_discrete_map={'red': 'red', 'grey': 'grey'},
+        color_discrete_map={'green': 'green', 'grey': 'grey'},
         labels={'log2(Total.CDS.length)': 'log2(CDS.length)', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
         title=''
     )
@@ -592,7 +592,7 @@ def update_scatter_plot(selected_cells,table):
         y='min.val',
         color='color',
         hover_data={'GeneID': True,'color':False},
-        color_discrete_map={'red': 'red', 'grey': 'grey'},
+        color_discrete_map={'green': 'green', 'grey': 'grey'},
         labels={'log2(Total.CDS.length)': 'log2(CDS.length)', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
         title=''
     )
@@ -664,7 +664,7 @@ def update_scatter_plot(selected_cells,table):
         y='min.val',
         color='color',
         hover_data={'GeneID': True,'color':False},
-        color_discrete_map={'red': 'red', 'grey': 'grey'},
+        color_discrete_map={'green': 'green', 'grey': 'grey'},
         labels={'HMS': 'HMS', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
         title=''
     )
@@ -735,7 +735,7 @@ def update_scatter_plot(selected_cells,table):
         y='min.val',
         color='color',
         hover_data={'GeneID': True,'color':False},
-        color_discrete_map={'red': 'red', 'grey': 'grey'},
+        color_discrete_map={'green': 'green', 'grey': 'grey'},
         labels={'HMS': 'HMS', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
         title=''
     )
