@@ -16,9 +16,19 @@ After selection of the transposon library with GNF179 and DHA, two statistical m
 ''')),
 ])),
      class_name="mb-4 mt-4"),
+    
+    #####Reorganize
+
+    #####Reorganize
+
+
+    
     dbc.Card(
           dbc.CardBody([
         dbc.CardHeader(html.H4('GNF179 drug perturbation'), className="rounded-3 mb-4"),
+              #######Insert table
+
+              #######Insert table
             dbc.Card([
                 dbc.CardHeader(html.H6("You can upload a comma seperated gene list containing at max of 10 genes and view the poisition of them respective to rest and also trending.Those genes being input has no sufficient data such as low TTAA will not be shown in the scatter plots below:")),
         dbc.CardBody([
