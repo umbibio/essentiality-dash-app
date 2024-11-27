@@ -4,6 +4,71 @@ import pages.components.pertutbation_data as pdata
 
 menu = None
 
+def make_filter_popover(name, data, step):
+    return html.Div([
+        dbc.Button('Filter', id=f'network-nodes-table-filter-{name}-toggle-button', color='primary', size='sm'),
+        dbc.Popover(
+            [
+                dbc.PopoverBody([
+                    dcc.RangeSlider(
+                        id=f'{name}-slider',
+                        # marks={i: str(i) for i in range(int(data['min']), int(data['max']) + 1)},                                                                                                     
+                        marks={data['min']: str(data['min']), data['max']: str(data['max'])},
+                        min=0,
+                        max=data['max'],
+                        step=step,
+                        tooltip={'placement': 'bottom', 'always_visible': False},
+                        dots=False,
+                        # included=False,                                                                                                                                                               
+                        # pushable=True                                                                                                                                                                 
+                    )
+                ]),
+            ],
+            id=f'network-nodes-table-filter-{name}-popover',
+            target=f'network-nodes-table-filter-{name}-toggle-button',
+            trigger='legacy',
+            style={'width': '600px'},
+        ),
+    ])
+
+# Define data and step value for filter popovers                                                                                                                                                        
+data_name = {'SetA_GNF_High_day15_logFC': {'min': -10, 'max': 10}, 'SetA_GNF_High_day15_PValue': {'min': 0, 'max': 1}, 'SetA_GNF_High_day15_FDR': {'min': 0, 'max': 1}, 'SetA_GNF_High_day15_mean_FC_sites': {'min': -10, 'max': 10}}
+step_value = 0.1
+
+# Define filter inputs for each column                                                                                                                                                                  
+#filter_inputs = {
+#    'geneID': dbc.Input(id='network-nodes-table-filter-GeneID', placeholder='Filter ...', size='sm'),
+#    'Product.Description': dbc.Input(id='network-nodes-table-filter-Product_Description', placeholder='Filter ...', size='sm'),
+#    'Symbol': dbc.Input(id='network-nodes-table-filter-symbol', placeholder='Filter ...', size='sm'),
+#    'SetA_GNF_High_day15_logFC': make_filter_popover('SetA_GNF_High_day15_logFC', data_name['SetA_GNF_High_day15_logFC'], step_value),
+#    'SetA_GNF_High_day15_PValue': make_filter_popover('SetA_GNF_High_day15_PValue', data_name['SetA_GNF_High_day15_PValue'], 0.01),
+#    'SetA_GNF_High_day15_FDR': make_filter_popover('SetA_GNF_High_day15_FDR', data_name['SetA_GNF_High_day15_FDR'], step_value),
+#    'SetA_GNF_High_day15_mean_FC_sites': make_filter_popover('SetA_GNF_High_day15_mean_FC_sites', data_name['SetA_GNF_High_day15_mean_FC_sites'], step_value),
+#    'SetA_GNF_High_day15_cv_inverse': make_filter_popover('SetA_GNF_High_day15_cv_inverse', data_name['SetA_GNF_High_day15_cv_inverse'], 0.01),
+#    'SetB_GNF_High_day15_logFC': make_filter_popover('SetB_GNF_High_day15_logFC', data_name['SetB_GNF_High_day15_logFC'], step_value),
+#    'SetB_GNF_High_day15_PValue': make_filter_popover('SetB_GNF_High_day15_PValue', data_name['SetB_GNF_High_day15_PValue'], 0.01),
+#    'SetB_GNF_High_day15_FDR': make_filter_popover('SetB_GNF_High_day15_FDR', data_name['SetB_GNF_High_day15_FDR'], step_value),
+#    'SetB_GNF_High_day15_mean_FC_sites': make_filter_popover('SetB_GNF_High_day15_mean_FC_sites', data_name['SetB_GNF_High_day15_mean_FC_sites'], step_value),
+#    'SetB_GNF_High_day15_cv_inverse': make_filter_popover('SetB_GNF_High_day15_cv_inverse', data_name['SetB_GNF_High_day15_cv_inverse'], 0.01),
+#}
+
+# Define table columns                                                                                                                                                                                  
+table_columns = [
+    {"id": "geneID", "name": "GeneID", "editable": False,'header_style': {'width': '15%', }, 'style': {'width': '15%', }},
+    {"id": "Product.Description", "name": "Product.Description", "editable": False,'header_style': {'width': '25%', }, 'style': {'width': '25%', }},
+    {"id": "Symbol", "name": "Symbol", "editable": False,'header_style': {'width': '15%', }, 'style': {'width': '15%', }},
+    {"id": "SetA_GNF_High_day15_logFC", "name": "SetA_day15_log2FC", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "SetA_GNF_High_day15_PValue", "name": "SetA_day15_PValue", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "SetA_GNF_High_day15_FDR", "name": "SetA_day15_FDR", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "SetA_GNF_High_day15_mean_FC_sites", "name": "setA_FC_siteslevel", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "SetA_GNF_High_day15_cv_inverse", "name": "SetA_day15_CVinverse", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "SetB_GNF_High_day15_logFC", "name": "SetB_day15_log2FC", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "SetB_GNF_High_day15_PValue", "name": "SetB_day15_PValue", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "SetB_GNF_High_day15_FDR", "name": "SetB_day15_FDR", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "SetB_GNF_High_day15_mean_FC_sites", "name": "setB_FC_siteslevel", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }},
+    {"id": "SetB_GNF_High_day15_cv_inverse", "name": "SetB_day15_CVinverse", "editable": False,'header_style': {'width': '12%', }, 'style': {'width': '12%', }}        
+]
+
 body = [
     dbc.Card(
             # dbc.CardHeader(html.H2("Plasmodium Knowlesi Essentiality Database")),
@@ -11,14 +76,14 @@ body = [
                 dbc.Row([
                     dbc.Col(dcc.Markdown('''
 After selection of the transposon library with GNF179 and DHA, two statistical models, EdgeR and a ‘site level’ model, were used to identify genes with significantly changed numbers of insertions. 
- CV inverse is a metric to measure whether the increasing or decreasing insertion pattern are evenly distributed across all TTAA sites within the CDS of the gene.                                                                    
-
+ CV inverse is a metric to measure whether the increasing or decreasing insertion pattern are evenly distributed across all TTAA sites within the CDS of the gene.                                                               
 ''')),
 ])),
      class_name="mb-4 mt-4"),
-    
-    #####Reorganize
 
+    ####Add a dbc.Card(box) for header                                                                                                                                        
+    #dbc.Card(
+    #    dbc.CardBody(dbc.Card(html.H4('GNF179 drug perturbation'))), class_name="rounded-3 mb-4"),
     #####Reorganize
 
 

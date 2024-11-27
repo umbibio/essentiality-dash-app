@@ -656,7 +656,7 @@ def update_figure1_DHA(selected_genes):
     fig.update_layout(
         title_text='Gene level log2FC model by edgeR',
         title_x=0.5,
-        xaxis_title='SetA_DHA_High_day15_edgeR_log2FC',
+        xaxis_title='SetA_DHA_High_day9_edgeR_log2FC',
         yaxis_title='SetB_DHA_High_day15_edgeR_log2FC',
         legend=dict(
             title=None,
@@ -748,7 +748,7 @@ def update_figure_DHA(selected_genes):
         fig.update_layout(
         title_text='CV inverse model',
         title_x=0.5,
-        xaxis_title='SetA_DHA_High_day15_cv_inverse',
+        xaxis_title='SetA_DHA_High_day9_cv_inverse',
         yaxis_title='SetB_DHA_High_day15_inverse',
         # showlegend=False,
        legend=dict(
@@ -809,7 +809,7 @@ def update_figure2_DHA(selected_genes):
     fig.update_layout(
         title_text='Site level log2FC model',
         title_x=0.5,
-        xaxis_title='SetA_DHA_High_day15_log2_mean_FC_sites',
+        xaxis_title='SetA_DHA_High_day9_log2_mean_FC_sites',
         yaxis_title='SetB_DHA_High_day15_log2_mean_FC_sites',
          legend=dict(
             title=None,
@@ -852,7 +852,8 @@ def update_download_button(n_clicks):
    if n_clicks is None:
       PreventUpdate
    if n_clicks is not None:
-    df = pdata.GNF_megatable.copy() 
+   # df = pdata.GNF_megatable.copy()
+    df = pdata.GNF_download_df.copy()
     csv_string = df.to_csv(index=False, encoding='utf-8')
     return dict(content=csv_string, filename=f"GNF_megatable.csv")
    
@@ -865,7 +866,8 @@ def update_download_button_DHA(n_clicks):
    if n_clicks is None:
       PreventUpdate
    if n_clicks is not None:
-    df = pdata.DHA_megatable.copy() 
+    # df = pdata.DHA_megatable.copy()
+    df = pdata.DHA_download_df.copy()
     csv_string = df.to_csv(index=False, encoding='utf-8')
     return dict(content=csv_string, filename=f"DHA_megatable.csv")
    
