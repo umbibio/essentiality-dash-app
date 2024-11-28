@@ -24,6 +24,7 @@ fig = px.scatter(
     y='min.val',
     color='log2_Total_CDS_length',
     color_continuous_scale=custom_color_scale,
+    hover_data={'GeneID': True},
     labels={'log2(Total.CDS.length)': 'log2(CDS.length)', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
     # title='F2S Plot'
 )
@@ -134,6 +135,7 @@ fig_5p = px.scatter(
     y='min.val',
     color='log2_Total_CDS_length',
     color_continuous_scale=custom_color_scale,
+    hover_data={'GeneID': True},
     labels={'log2(Total.CDS.length)': 'log2(CDS.length)', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
     # title='F2S Plot'
 )
@@ -192,6 +194,7 @@ fig_HMS = px.scatter(
     y='min.val',
     color='HMS',
     color_continuous_scale=custom_color_scale,
+    hover_data={'GeneID': True},
     labels={'HMS': 'HMS', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
     # title='F2S Plot'
 )
@@ -240,6 +243,7 @@ fig_5p_HMS = px.scatter(
     y='min.val',
     color='HMS',
     color_continuous_scale=custom_color_scale,
+    hover_data={'GeneID': True},
     labels={'HMS': 'HMS', 'R_i': 'Normalized CDS', 'min.val': 'Mean squared error'},
     # title='F2S Plot'
 )

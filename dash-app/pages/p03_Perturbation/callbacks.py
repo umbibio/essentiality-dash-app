@@ -1,4 +1,3 @@
-
 from dash import Dash, html, dcc, callback, Input, Output, State,ALL,MATCH
 import plotly.express as px
 from app import app 
@@ -10,6 +9,24 @@ import numpy as np
 import plotly.graph_objects as go
 import pages.components.pertutbation_data  as pdata
 from dash.exceptions import PreventUpdate
+from pages.components.data_loader import load_data
+
+path= 'assets/GNF_megatable_final.xlsx'
+GNF_df = load_data(path)
+columns_to_round = ["SetA_GNF_High_day15_logFC","SetA_GNF_High_day15_FDR","SetA_GNF_High_day15_mean_FC_sites","SetA_GNF_High_day15_cv_inverse",
+                    "SetB_GNF_High_day15_logFC", "SetB_GNF_High_day15_FDR","SetB_GNF_High_day15_mean_FC_sites","SetB_GNF_High_day15_cv_inverse"]
+
+GNF_df[columns_to_round] = GNF_df[columns_to_round].round(3)
+
+path2= 'assets/DHA_megatable_final.xlsx'
+DHA_df = load_data(path2)
+columns_to_round = ["SetA_DHA_High_day9_logFC","SetA_DHA_High_day9_FDR","SetA_DHA_High_day9_mean_FC_sites","SetA_DHA_High_day9_cv_inverse",
+                    "SetB_DHA_High_day15_logFC", "SetB_DHA_High_day15_FDR","SetB_DHA_High_day15_mean_FC_sites","SetB_DHA_High_day15_cv_inverse"]
+
+DHA_df[columns_to_round] = DHA_df[columns_to_round].round(3)
+
+
+
 
 
 @app.callback(

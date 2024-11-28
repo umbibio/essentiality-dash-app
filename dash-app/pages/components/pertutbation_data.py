@@ -238,7 +238,7 @@ def trending_plot(Drug_megatable,geneName):
 
 
 # DHA 
-setA_DHA = 'SetA_DHA_High_day15'
+setA_DHA = 'SetA_DHA_High_day9'
 setB_DHA='SetB_DHA_High_day15'
 # Step 1: Read Data
 setA_file_DHA = pd.read_excel('assets/VC_SetA_DHA_High_day9_VS_WT_SetA_day20.xlsx')
@@ -308,7 +308,7 @@ fig_DHA.add_vline(x=xintercept_cutoff_DHA[0.97], line_width=3, line_dash="dash",
 # Update layout
 fig_DHA.update_layout(title_text=f'CV inverse model',
                    title_x=0.5,
-                  xaxis_title=f'{setA}_cv_inverse', yaxis_title=f'{setB}_cv_inverse',
+                  xaxis_title=f'{setA_DHA}_cv_inverse', yaxis_title=f'{setB_DHA}_cv_inverse',
                   showlegend=False,
                   plot_bgcolor='white', font={'color': 'black'}),
 
@@ -359,7 +359,7 @@ fig1_DHA.add_vline(x=xintercept_cutoff_edgeR_DHA[0.98], line_width=3, line_dash=
 # Update layout
 fig1_DHA.update_layout(title_text=f'Gene level log2FC model by edgeR',
                    title_x=0.5,
-                  xaxis_title=f'{setA}_edgeR_log2FC', yaxis_title=f'{setB}_edgeR_log2FC',
+                  xaxis_title=f'{setA_DHA}_edgeR_log2FC', yaxis_title=f'{setB_DHA}_edgeR_log2FC',
                   showlegend=False,
                   plot_bgcolor='white', font={'color': 'black'})
 fig1_DHA.update_traces(
@@ -410,7 +410,7 @@ fig2_DHA.add_vline(x=xintercept_cutoff_cv_DHA[0.98], line_width=3, line_dash="da
 # Update layout
 fig2_DHA.update_layout(title_text=f'Site level log2FC model',
                    title_x=0.5,
-                  xaxis_title=f'{setA}_log2_mean_FC_sites', yaxis_title=f'{setB}_log2_mean_FC_sites',
+                  xaxis_title=f'{setA_DHA}_log2_mean_FC_sites', yaxis_title=f'{setB_DHA}_log2_mean_FC_sites',
                   showlegend=False,
                   plot_bgcolor='white', font={'color': 'black'})
 
@@ -463,7 +463,7 @@ def trending_plot_DHA(Drug_megatable,geneName):
     df_plot['cond'] = pd.Categorical(df_plot['cond'], categories=df_plot['cond'].unique())
     return df_plot
 
-geneName = ("PKNH_0621300", "PKNH_0722900")
+geneName = ("PKNH_0912900", "PKNH_1008000")
 df_plot=trending_plot_DHA(DHA_megatable,geneName)
   
     # Create a line plot with points using Plotly Express
@@ -494,10 +494,11 @@ fig1_tr_DHA.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
 
 
 
-df_plot_GNF=trending_plot_DHA(GNF_megatable,geneName)
+geneName2 = ("PKNH_0621300", "PKNH_0722900")
+df_plot_GNF=trending_plot(GNF_megatable,geneName2)
   
     # Create a line plot with points using Plotly Express
-fig_tr_GNF = px.line(df_plot, x='Time', y='logFC_edgeR', color='cond', facet_col='geneID',
+fig_tr_GNF = px.line(df_plot_GNF, x='Time', y='logFC_edgeR', color='cond', facet_col='geneID',
               color_discrete_sequence=px.colors.qualitative.Set1, markers=True)
     
 # Update the layout
@@ -511,7 +512,7 @@ fig_tr_GNF.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
 
 
     # Create a line plot with points using Plotly Express
-fig1_tr_GNF= px.line(df_plot, x='Time', y='log2_mean_FC_sites', color='cond', facet_col='geneID',
+fig1_tr_GNF= px.line(df_plot_GNF, x='Time', y='log2_mean_FC_sites', color='cond', facet_col='geneID',
               color_discrete_sequence=px.colors.qualitative.Set1, markers=True)
    
 # Update the layout
@@ -521,3 +522,6 @@ fig1_tr_GNF.update_layout(
 fig1_tr_GNF.update_xaxes(categoryorder='array', categoryarray=sorted(df_plot['Time'].unique(), key=lambda x: int(extract_day(x))))
 # Update facet labels
 fig1_tr_GNF.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+
+GNF_download_df = pd.read_excel('assets/GNF_megatable_final.xlsx')
+DHA_download_df = pd.read_excel('assets/DHA_megatable_final.xlsx')

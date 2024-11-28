@@ -87,7 +87,7 @@ tracks =[
                     'color': 'rgb(169,169,169)'
                 },
                 {
-                    'name': 'Coding Genes',
+                    'name': 'Coding genes',
                     'url': app.get_asset_url('PlasmoDB-58_PknowlesiH.gff'),
                     'displayMode': 'EXPANDED',
                     'height': 100,
@@ -108,7 +108,7 @@ tracks =[
                     'color': 'rgb(0,100,0)'
                 },
                 {
-                    'name': 'TTAA Genome Pos',
+                    'name': 'TTAA loci',
                     'url': app.get_asset_url('Pk_theo_TTAA__include_contigs_R_modified_final2.bed'),
                     'displayMode': 'COLLAPSED',
                     'height': 100,

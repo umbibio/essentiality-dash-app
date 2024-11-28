@@ -201,7 +201,7 @@ This page is to explore the truncatable genes in P.knowlesi. The raw reads of in
         dbc.Col(
              dbc.Card(
         dbc.CardBody([
-               dbc.CardHeader(html.H6(" 3' truncation",style={
+               dbc.CardHeader(html.H6(" 3' truncation model",style={
                         'font-weight': 'bold',  # Makes the text bold
                         'text-align': 'center'  # Centers the text
                     }),className="rounded-3"),
@@ -216,7 +216,7 @@ This page is to explore the truncatable genes in P.knowlesi. The raw reads of in
         dbc.Col(
              dbc.Card(
         dbc.CardBody([
-            dbc.CardHeader(html.H6(" 5' truncation" ,style={
+            dbc.CardHeader(html.H6(" 5' truncation model" ,style={
                         'font-weight': 'bold',  # Makes the text bold
                         'text-align': 'center'  # Centers the text
                     }),className="rounded-3"),
@@ -241,7 +241,7 @@ This page is to explore the truncatable genes in P.knowlesi. The raw reads of in
         dbc.Col(
              dbc.Card(
         dbc.CardBody([
-               dbc.CardHeader(html.H6(" 3' truncation",style={
+               dbc.CardHeader(html.H6(" 3' truncation model",style={
                         'font-weight': 'bold',  # Makes the text bold
                         'text-align': 'center'  # Centers the text
                     }),className="rounded-3"),
@@ -256,7 +256,7 @@ This page is to explore the truncatable genes in P.knowlesi. The raw reads of in
         dbc.Col(
              dbc.Card(
         dbc.CardBody([
-            dbc.CardHeader(html.H6(" 5' truncation" ,style={
+            dbc.CardHeader(html.H6(" 5' truncation model" ,style={
                         'font-weight': 'bold',  # Makes the text bold
                         'text-align': 'center'  # Centers the text
                     }),className="rounded-3"),
