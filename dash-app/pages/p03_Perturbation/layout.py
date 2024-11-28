@@ -75,8 +75,7 @@ body = [
             dbc.CardBody(
                 dbc.Row([
                     dbc.Col(dcc.Markdown('''
-After selection of the transposon library with GNF179 and DHA, two statistical models, EdgeR and a ‘site level’ model, were used to identify genes with significantly changed numbers of insertions. 
- CV inverse is a metric to measure whether the increasing or decreasing insertion pattern are evenly distributed across all TTAA sites within the CDS of the gene.                                                               
+After selection of the transposon library with GNF179 and DHA, two statistical models, EdgeR and a ‘site level’ model, were used to identify genes with significantly changed numbers of insertions. CV inverse is a metric to measure whether the increasing or decreasing insertion pattern are evenly distributed across all TTAA sites within the CDS of the gene. Please click "Download Data" button to download full table.                                                               
 ''')),
 ])),
      class_name="mb-4 mt-4"),
